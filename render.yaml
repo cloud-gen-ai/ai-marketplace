@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "services": [
+    {
+      "name": "ai-marketplace-api",
+      "type": "web",
+      "env": "python",
+      "buildCommand": "pip install -r apps/api/requirements.txt",
+      "startCommand": "cd apps/api && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
+      "healthCheckPath": "/api/v1/healthz",
+      "envVars": [
+        { "key": "DATABASE_URL", "value": "postgresql+asyncpg://postgres:postgres@db:5432/ai_marketplace" },
+        { "key": "REDIS_URL", "value": "redis://localhost:6379/0" },
+        { "key": "STRIPE_SECRET_KEY", "value": "sk_test_placeholder" },
+        { "key": "STRIPE_WEBHOOK_SECRET", "value": "whsec_placeholder" },
+        { "key": "SECRET_KEY", "value": "change-me-in-production" },
+        { "key": "ALGORITHM", "value": "HS256" },
+        { "key": "ACCESS_TOKEN_EXPIRE_MINUTES", "value": "1440" }
+      ]
+    }
+  ]
+}
