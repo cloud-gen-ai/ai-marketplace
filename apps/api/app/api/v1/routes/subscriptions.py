@@ -1,37 +1,56 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.models.subscription import Subscription
+from app.schemas.subscription import SubscriptionCreate, SubscriptionRead
 
 router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
 
-SUBSCRIPTIONS = [
-    {
-        "id": 1,
-        "user_id": 1,
-        "product_id": 1,
-        "plan_name": "Pro",
-        "status": "active",
-        "stripe_subscription_id": "sub_demo_001",
-        "current_period_end": "2026-10-29T00:00:00Z",
-        "created_at": "2026-09-29T00:00:00Z",
+
+@router.get("", response_model=dict)
+async def list_subscriptions(db: AsyncSession = Depends(get_db)) -> dict:
+    result = await db.execute(select(Subscription))
+    items = result.scalars().all()
+    return {
+        "items": [
+            SubscriptionRead(
+                id=item.id,
+                user_id=item.user_id,
+                product_id=item.product_id,
+                plan_name=item.plan_name,
+                status=item.status,
+                stripe_subscription_id=item.stripe_subscription_id,
+                current_period_end=item.current_period_end.isoformat() if item.current_period_end else None,
+                created_at=item.created_at.isoformat(),
+            )
+            for item in items
+        ],
+        "total": len(items),
     }
-]
 
 
-@router.get("")
-async def list_subscriptions() -> dict:
-    return {"items": SUBSCRIPTIONS, "total": len(SUBSCRIPTIONS)}
+@router.post("", response_model=SubscriptionRead, status_code=status.HTTP_201_CREATED)
+async def create_subscription(payload: SubscriptionCreate, db: AsyncSession = Depends(get_db)) -> SubscriptionRead:
+    item = Subscription(
+        user_id=1,
+        product_id=payload.product_id,
+        plan_name=payload.plan_name,
+        status=payload.status,
+        stripe_subscription_id=payload.stripe_subscription_id,
+    )
+    db.add(item)
+    await db.commit()
+    await db.refresh(item)
 
-
-@router.post("", status_code=status.HTTP_201_CREATED)
-async def create_subscription(payload: dict) -> dict:
-    item = {
-        "id": len(SUBSCRIPTIONS) + 1,
-        "user_id": payload.get("user_id", 1),
-        "product_id": payload.get("product_id", 1),
-        "plan_name": payload.get("plan_name", "starter"),
-        "status": payload.get("status", "active"),
-        "stripe_subscription_id": payload.get("stripe_subscription_id", "sub_demo_local"),
-        "current_period_end": payload.get("current_period_end", "2026-10-29T00:00:00Z"),
-        "created_at": "2026-09-29T00:00:00Z",
-    }
-    SUBSCRIPTIONS.append(item)
-    return item
+    return SubscriptionRead(
+        id=item.id,
+        user_id=item.user_id,
+        product_id=item.product_id,
+        plan_name=item.plan_name,
+        status=item.status,
+        stripe_subscription_id=item.stripe_subscription_id,
+        current_period_end=item.current_period_end.isoformat() if item.current_period_end else None,
+        created_at=item.created_at.isoformat(),
+    )

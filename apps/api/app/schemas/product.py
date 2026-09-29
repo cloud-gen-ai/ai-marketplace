@@ -1,5 +1,3 @@
-from typing import List, Literal
-
 from pydantic import BaseModel, Field
 
 
@@ -11,7 +9,7 @@ class ProductBase(BaseModel):
     description: str | None = None
     price: float = 0.0
     is_free: bool = False
-    status: Literal["draft", "pending", "approved", "live", "rejected"] = "draft"
+    status: str = "draft"
 
 
 class ProductCreate(ProductBase):
@@ -24,10 +22,11 @@ class ProductUpdate(BaseModel):
     short_description: str | None = None
     description: str | None = None
     price: float | None = None
-    status: Literal["draft", "pending", "approved", "live", "rejected"] | None = None
+    is_free: bool | None = None
+    status: str | None = None
 
 
-class ProductResponse(ProductBase):
+class ProductRead(ProductBase):
     id: int
     seller_id: int | None = None
     created_at: str
@@ -36,5 +35,5 @@ class ProductResponse(ProductBase):
 
 
 class ProductListResponse(BaseModel):
-    items: List[ProductResponse]
+    items: list[ProductRead]
     total: int

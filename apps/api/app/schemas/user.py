@@ -12,7 +12,7 @@ class UserCreate(UserBase):
     pass
 
 
-class UserResponse(UserBase):
+class UserRead(UserBase):
     id: int
     created_at: str
 

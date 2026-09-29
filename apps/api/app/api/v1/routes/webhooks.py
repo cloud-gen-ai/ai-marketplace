@@ -1,13 +1,8 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
 
 @router.post("/stripe")
-async def stripe_webhook(request: Request) -> dict:
-    payload = await request.json()
-    return {
-        "status": "received",
-        "event_type": payload.get("type", "unknown"),
-        "event_id": payload.get("id", "unknown"),
-    }
+async def stripe_webhook() -> dict:
+    return {"status": "received", "message": "Stripe webhook received. Implement verification and processing next."}

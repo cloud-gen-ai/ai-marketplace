@@ -5,9 +5,9 @@ from app.core.database import get_db
 
 
 async def get_current_user(db: AsyncSession = Depends(get_db)) -> dict:
-    """Placeholder auth dependency for future JWT/Supabase integration."""
+    """Placeholder auth dependency for future JWT/Supabase auth integration."""
     return {
-        "id": "demo-user",
-        "role": "buyer",
+        "id": 1,
+        "role": "seller",
         "email": "demo@example.com",
     }

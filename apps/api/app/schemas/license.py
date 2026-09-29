@@ -11,7 +11,7 @@ class LicenseCreate(LicenseBase):
     pass
 
 
-class LicenseResponse(LicenseBase):
+class LicenseRead(LicenseBase):
     id: int
     user_id: int
     expires_at: str | None = None
