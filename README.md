@@ -1,91 +1,37 @@
 # AI Marketplace
 
-A subscription-based AI marketplace monorepo for selling reusable skill packs, workflows, templates, and plugin bundles for tools like GitHub Copilot, Claude Code, Cursor, and custom AI agents.
+A subscription-based AI marketplace monorepo for selling reusable AI skill packs, plugin bundles, and workflow assets for GitHub Copilot, Claude Code, Cursor, and custom AI agent stacks.
 
 ## Stack
 
-- Frontend: Next.js on Vercel
-- API: Node.js/Express on Render or Railway
-- Database: Supabase PostgreSQL (recommended free option)
-- Auth: Supabase Auth or GitHub OAuth
-- Storage: Supabase Storage
-- Payments: Stripe Checkout + Webhooks
-- Email: Resend
+- Frontend: Next.js + Vercel
+- API: FastAPI + Uvicorn
+- Database: Supabase PostgreSQL
+- Cache: Redis
+- Payments: Stripe
+- Auth: JWT / Supabase Auth
+- Deployment: Vercel + Render/Fly/Railway
 
-## Recommended free database
+## Why this stack
 
-Supabase is the best default choice for this project because it includes:
+- FastAPI is ideal for async, high-performance API workloads.
+- PostgreSQL is a better long-term fit than document DBs for billing, licenses, and marketplaces.
+- Supabase gives a free PostgreSQL tier with auth and storage included.
+- Vercel is free-tier friendly and excellent for Next.js frontends.
+- Stripe is the best payment system for subscriptions and digital licensing.
 
-- PostgreSQL database
-- built-in authentication
-- storage buckets
-- row-level security
-- easy API generation
-- free tier adequate for MVP use
+## Quick deploy plan
 
-This makes it a stronger fit than MongoDB Atlas for a marketplace that needs strict relational data, subscriptions, and licensing.
+1. Create a Supabase Postgres project.
+2. Configure your DB schema.
+3. Create a Redis instance (Upstash/free tier or managed).
+4. Create a Stripe account and product prices.
+5. Deploy the FastAPI backend to Render/Fly/Railway.
+6. Deploy the Next.js app to Vercel.
+7. Set frontend and backend environment variables.
+8. Configure Stripe webhook to your backend endpoint.
+9. Launch and test all purchase flows.
 
-## Recommended monorepo structure
+## Production repo state
 
-```text
-ai-marketplace/
-├── apps/
-│   ├── web/                # Next.js storefront
-│   └── api/                # Express API
-├── packages/
-│   ├── shared/             # shared data/types
-│   └── ui/                 # reusable design system (planned)
-├── docs/
-│   ├── architecture.md
-│   ├── database.md
-│   └── deployment.md
-├── .env.example
-├── .gitignore
-├── package.json
-├── pnpm-workspace.yaml
-├── turbo.json
-└── README.md
-```
-
-## MVP goals
-
-1. Marketplace landing page and catalog
-2. Product detail pages
-3. Pricing and checkout flow
-4. Seller dashboard for publishing products
-5. License and subscription records
-6. Review and moderation flows
-7. Vercel + Supabase deployment
-
-## Product model
-
-Each product should represent a sellable digital asset:
-
-- title
-- slug
-- description
-- category
-- pricing plan
-- supported AI tools
-- version history
-- doc and install links
-- screenshots or demo videos
-- seller and moderation status
-
-## Deployment recommendation
-
-- Web front-end: Vercel (free)
-- API backend: Render or Railway (free-tier friendly)
-- Database/auth/storage: Supabase (free)
-- Payments: Stripe (test mode for MVP)
-
-## Next steps
-
-- Configure Supabase project and schema
-- Add Stripe checkout and webhook endpoint
-- Add seller onboarding and product publish flow
-- Add product search and filters
-- Add auth and session handling
-- Deploy the web app
-
-This repository is intentionally scaffolded as a monorepo foundation so you can grow from MVP to a production marketplace without reworking the project structure.
+This repository includes the core backend foundation, marketplace APIs, subscription/licensing logic, cache/search, and deployment scaffolding for production.
