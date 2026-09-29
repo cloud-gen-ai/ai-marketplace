@@ -1,0 +1,25 @@
+# Fly.io deployment config
+app = "ai-marketplace-api"
+primary_region = "sjc"
+
+[build]
+  builder = "paackages"
+
+[env]
+  PYTHONUNBUFFERED = "true"
+
+[[services]]
+  internal_port = 8000
+  protocol = "tcp"
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 1000
+    soft_limit = 800
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["http", "tls"]
