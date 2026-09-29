@@ -1,4 +1,5 @@
 # Production Launch Checklist for AI Marketplace
+## Using Fly.io (Free), Vercel (Free), and Supabase (Free)
 
 ## Step 1: Merge feature branch to main
 
@@ -19,14 +20,14 @@ Add these variables:
 
 ```
 NEXT_PUBLIC_APP_URL=https://your-vercel-app.vercel.app
-NEXT_PUBLIC_API_URL=https://your-render-api.onrender.com
+NEXT_PUBLIC_API_URL=https://your-fly-api.fly.dev
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-### Backend Environment Variables (Render/Railway/Fly)
+### Backend Environment Variables (Fly.io)
 
-For your backend service, set these variables:
+These will be set via Fly CLI in Step 5
 
 ```
 APP_ENV=production
@@ -39,11 +40,31 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 ```
 
-## Step 3: Supabase Database Schema
+## Step 3: Create Supabase Project (Free)
 
-Go to `https://app.supabase.com` → Select your project → SQL Editor
+1. Go to `https://supabase.com`
+2. Click **Create a new project**
+3. Choose:
+   - Project name: `ai-marketplace`
+   - Database password: Create a strong password
+   - Region: Choose closest to your users
+4. Wait for database to initialize (2-3 minutes)
+5. Go to **Settings → Database** and copy:
+   - **Host**: `db.<project>.supabase.co`
+   - **Database**: `postgres`
+   - **Password**: Your chosen password
+   - **Port**: `5432`
 
-Run this script to create all tables:
+Construct your DATABASE_URL:
+```
+postgresql+asyncpg://postgres:your_password@db.your-project.supabase.co:5432/postgres
+```
+
+## Step 4: Create Supabase Database Schema
+
+Go to Supabase dashboard → **SQL Editor** → **New Query**
+
+Paste and run this script:
 
 ```sql
 -- Users table
@@ -122,141 +143,208 @@ create table if not exists reviews (
 create index if not exists idx_reviews_product_id on reviews(product_id);
 ```
 
-## Step 4: Stripe Setup
+## Step 5: Setup Upstash Redis (Free)
 
-1. Go to `https://dashboard.stripe.com/apikeys`
-2. Copy your **Secret Key** (starts with `sk_live_...`)
-3. Go to **Webhooks** → Create endpoint
-4. Set webhook URL to: `https://your-api-domain.onrender.com/api/v1/webhooks/stripe`
-5. Select events: `checkout.session.completed`, `customer.subscription.deleted`
-6. Copy the **Signing Secret** (starts with `whsec_...`)
+1. Go to `https://upstash.com`
+2. Sign up (free tier available)
+3. Click **Create Database**
+4. Choose:
+   - Database name: `ai-marketplace-redis`
+   - Region: Choose closest to you
+   - Type: **Redis**
+5. Click **Create**
+6. Go to **Details** and copy:
+   - **UPSTASH_REDIS_REST_URL**: You'll use this
+   - Or copy the **Redis CLI** connection string
 
-## Step 5: Deploy Backend to Render
+Your REDIS_URL should look like:
+```
+redis://default:your-password@your-host:6379
+```
 
-1. Go to `https://render.com/dashboard`
-2. Click **New** → **Web Service**
-3. Connect your GitHub repository (cloud-gen-ai/ai-marketplace)
-4. Configure:
-   - Name: `ai-marketplace-api`
-   - Environment: `Python 3.12`
-   - Build Command: `pip install -r apps/api/requirements.txt`
-   - Start Command: `cd apps/api && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - Region: Choose closest to your users
-5. Add all environment variables from Step 2
-6. Click **Create Web Service**
-7. Wait for deployment (5-10 minutes)
-8. Copy your Render URL (e.g., `https://ai-marketplace-api.onrender.com`)
+## Step 6: Install Fly.io CLI and Deploy
 
-## Step 6: Deploy Frontend to Vercel
+### 6.1 Install Fly.io CLI
 
-1. Go to `https://vercel.com/dashboard`
-2. Click **Add New** → **Project**
-3. Import your GitHub repository
-4. Configure:
-   - Framework Preset: Next.js
-   - Root Directory: `apps/web`
-5. Add all environment variables (update API_URL with your Render URL)
-6. Click **Deploy**
-7. Wait for deployment (2-5 minutes)
-8. Copy your Vercel URL
-
-## Step 7: Update Environment Variables
-
-After deployment, update these:
-
-### Vercel Frontend
-- Update `NEXT_PUBLIC_API_URL` with your Render API URL
-- Redeploy to Vercel
-
-### Render Backend  
-- No changes needed if you set them in Step 5
-
-## Step 8: Test the Flow
-
-### 1. Create a test user
 ```bash
-curl -X POST https://your-api-domain.onrender.com/api/v1/auth/register \
+# On Mac
+brew install flyctl
+
+# On Linux
+curl -L https://fly.io/install.sh | sh
+
+# On Windows
+choco install flyctl
+```
+
+### 6.2 Login to Fly.io
+
+```bash
+flyctl auth login
+```
+
+### 6.3 Launch Your App
+
+```bash
+cd apps/api
+flyctl launch
+```
+
+When prompted:
+- App name: `ai-marketplace-api`
+- Region: Choose closest to you
+- Would you like to set up a Postgres database? **No** (we're using Supabase)
+- Would you like to deploy now? **No** (we'll set env vars first)
+
+### 6.4 Set Environment Variables
+
+```bash
+flyctl secrets set \
+  APP_ENV=production \
+  DATABASE_URL="postgresql+asyncpg://postgres:your_password@db.your-project.supabase.co:5432/postgres" \
+  REDIS_URL="redis://default:your-password@your-host:6379" \
+  STRIPE_SECRET_KEY="sk_test_placeholder" \
+  STRIPE_WEBHOOK_SECRET="whsec_placeholder" \
+  SECRET_KEY="your-super-secure-random-secret-here" \
+  ALGORITHM="HS256" \
+  ACCESS_TOKEN_EXPIRE_MINUTES="1440"
+```
+
+### 6.5 Deploy to Fly.io
+
+```bash
+flyctl deploy
+```
+
+Wait for deployment (5-10 minutes)
+
+Get your Fly.io URL:
+```bash
+flyctl info
+```
+
+Your API will be at: `https://ai-marketplace-api.fly.dev`
+
+## Step 7: Update Vercel with Your Fly.io URL
+
+1. Go to Vercel dashboard
+2. Select your ai-marketplace project
+3. Go to **Settings → Environment Variables**
+4. Update `NEXT_PUBLIC_API_URL` to your Fly.io URL (e.g., `https://ai-marketplace-api.fly.dev`)
+5. Redeploy: Click **Deployments → Latest → Redeploy**
+
+## Step 8: Setup Stripe Webhook
+
+1. Go to `https://dashboard.stripe.com/webhooks`
+2. Click **Add endpoint**
+3. Endpoint URL: `https://ai-marketplace-api.fly.dev/api/v1/webhooks/stripe`
+4. Events to send:
+   - `checkout.session.completed`
+   - `customer.subscription.deleted`
+5. Click **Add endpoint**
+6. Copy the **Signing secret** (starts with `whsec_`)
+
+Update in Fly.io:
+```bash
+flyctl secrets set STRIPE_WEBHOOK_SECRET="whsec_your_actual_secret"
+```
+
+Redeploy:
+```bash
+flyctl deploy
+```
+
+## Step 9: Test the Complete Flow
+
+### 9.1 Test Backend Health
+
+```bash
+curl https://ai-marketplace-api.fly.dev/api/v1/healthz
+```
+
+Should return:
+```json
+{"status":"ok","service":"ai-marketplace-api"}
+```
+
+### 9.2 Create a Test User
+
+```bash
+curl -X POST https://ai-marketplace-api.fly.dev/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
-    "password": "Test123!",
+    "password": "Test123456",
     "name": "Test User",
     "role": "buyer"
   }'
 ```
 
-### 2. List products
-```bash
-curl https://your-api-domain.onrender.com/api/v1/marketplace/products
+You should get back a token:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "user": {"id": 1, "email": "test@example.com", "role": "buyer"}
+}
 ```
 
-### 3. Create a test seller and product
+### 9.3 List Products
+
 ```bash
-# Register as seller
-curl -X POST https://your-api-domain.onrender.com/api/v1/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "seller@example.com",
-    "password": "Seller123!",
-    "name": "Test Seller",
-    "role": "seller"
-  }'
-
-# Login and get token
-TOKEN=$(curl -X POST https://your-api-domain.onrender.com/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"seller@example.com","password":"Seller123!"}' | jq -r '.access_token')
-
-# Create product
-curl -X POST https://your-api-domain.onrender.com/api/v1/products \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "slug": "test-skill-pack",
-    "title": "Test Skill Pack",
-    "category": "Development",
-    "description": "A test AI skill pack",
-    "price": 29.99,
-    "is_free": false,
-    "status": "pending"
-  }'
+curl https://ai-marketplace-api.fly.dev/api/v1/marketplace/products
 ```
 
-### 4. Test checkout and payment
-- Visit your Vercel frontend
-- Browse marketplace
-- Click "Get Access" on a product
-- Complete Stripe test payment (use `4242 4242 4242 4242` for test card)
-- Verify license is created in database
+Should return:
+```json
+{"items": [], "total": 0}
+```
 
-## Step 9: Production Verification
+### 9.4 Test Frontend
 
-- [ ] Vercel frontend is deployed and accessible
-- [ ] Render API is deployed and responding
-- [ ] Supabase database is connected and tables exist
-- [ ] Stripe webhook is configured and signing secret is set
+Visit your Vercel URL (e.g., `https://your-vercel-app.vercel.app`)
+
+You should see:
+- Landing page
+- Marketplace page
+- Ability to sign up and login
+
+## Step 10: Go Live Checklist
+
+- [ ] Fly.io backend is deployed and responding
+- [ ] Vercel frontend is deployed
+- [ ] Supabase database is connected
+- [ ] Redis cache is connected
+- [ ] API endpoints respond correctly
 - [ ] User registration works
-- [ ] Product creation works (seller only)
-- [ ] Stripe checkout flow completes
-- [ ] License is created after successful payment
-- [ ] Admin approval endpoints work
-- [ ] Product search and filtering work
-- [ ] Redis cache is working (optional for MVP)
+- [ ] Stripe webhook is configured
+- [ ] Frontend connects to backend API
+- [ ] Search and filters work
+- [ ] Marketplace displays products
+- [ ] Admin approval endpoints are accessible
 
-## Step 10: Go Live
+## Step 11: Switch to Stripe Live Mode (When Ready)
 
-1. Switch Stripe to **Live Mode**
-2. Update Stripe keys in Render to `sk_live_...` keys
-3. Update Stripe webhook secret to live webhook secret
-4. Test a real payment (small amount)
-5. Monitor error logs in Render and Vercel
-6. Launch marketing
+1. Get your Stripe Live keys from `https://dashboard.stripe.com/apikeys`
+2. Update Fly.io secrets:
+   ```bash
+   flyctl secrets set STRIPE_SECRET_KEY="sk_live_your_actual_key"
+   flyctl secrets set STRIPE_WEBHOOK_SECRET="whsec_live_secret"
+   flyctl deploy
+   ```
+3. Update Stripe webhook URL if needed
+4. Test a real payment
+5. Launch!
 
-## Monitoring & Maintenance
+## Complete Free Stack Summary
 
-- Monitor Render logs: `https://render.com/dashboard`
-- Monitor Vercel logs: `https://vercel.com/dashboard`
-- Check Supabase usage: `https://app.supabase.com`
-- Monitor Stripe payments: `https://dashboard.stripe.com`
+| Component | Platform | Cost | Free Tier |
+|-----------|----------|------|----------|
+| Frontend | Vercel | FREE | Yes |
+| Backend API | Fly.io | FREE | Yes (3 VMs) |
+| Database | Supabase | FREE | Yes (500MB) |
+| Cache | Upstash Redis | FREE | Yes |
+| Payments | Stripe | FREE | Until you charge |
+| **TOTAL** | | **FREE** | **Yes** |
 
-You're now ready to launch your AI marketplace!
+**Your marketplace is now ready to launch with zero infrastructure costs!**

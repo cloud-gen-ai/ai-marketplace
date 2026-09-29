@@ -1,9 +1,10 @@
-# Fly.io deployment config
+# Fly.io Deployment Configuration
+
 app = "ai-marketplace-api"
 primary_region = "sjc"
 
 [build]
-  builder = "paackages"
+  builder = "heroku"
 
 [env]
   PYTHONUNBUFFERED = "true"
