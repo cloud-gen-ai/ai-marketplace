@@ -3,8 +3,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.security import get_current_user, hash_password, require_roles
 from app.models.user import User
-from app.schemas.user import UserCreate, UserRead
+from app.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -55,8 +56,40 @@ async def create_user(payload: UserCreate, db: AsyncSession = Depends(get_db)) -
         name=payload.name,
         avatar_url=payload.avatar_url,
         role=payload.role,
+        hashed_password=hash_password(payload.password),
+        is_active=True,
     )
     db.add(item)
+    await db.commit()
+    await db.refresh(item)
+
+    return UserRead(
+        id=item.id,
+        email=item.email,
+        name=item.name,
+        avatar_url=item.avatar_url,
+        role=item.role,
+        created_at=item.created_at.isoformat(),
+    )
+
+
+@router.patch("/{user_id}", response_model=UserRead)
+async def update_user(
+    user_id: int,
+    payload: UserUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserRead:
+    if current_user.id != user_id and current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only update your own profile")
+
+    item = await db.get(User, user_id)
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(item, field, value)
+
     await db.commit()
     await db.refresh(item)
 

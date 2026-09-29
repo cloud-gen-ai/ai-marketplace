@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.security import get_current_user
 from app.models.subscription import Subscription
+from app.models.user import User
 from app.schemas.subscription import SubscriptionCreate, SubscriptionRead
 
 router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
@@ -32,9 +34,13 @@ async def list_subscriptions(db: AsyncSession = Depends(get_db)) -> dict:
 
 
 @router.post("", response_model=SubscriptionRead, status_code=status.HTTP_201_CREATED)
-async def create_subscription(payload: SubscriptionCreate, db: AsyncSession = Depends(get_db)) -> SubscriptionRead:
+async def create_subscription(
+    payload: SubscriptionCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> SubscriptionRead:
     item = Subscription(
-        user_id=1,
+        user_id=current_user.id,
         product_id=payload.product_id,
         plan_name=payload.plan_name,
         status=payload.status,

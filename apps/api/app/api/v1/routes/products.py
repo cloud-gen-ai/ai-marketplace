@@ -1,11 +1,11 @@
-from typing import Any
-
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.security import get_current_user, require_roles
 from app.models.product import Product
+from app.models.user import User
 from app.schemas.product import ProductCreate, ProductListResponse, ProductRead, ProductUpdate
 
 router = APIRouter(prefix="/products", tags=["products"])
@@ -13,9 +13,9 @@ router = APIRouter(prefix="/products", tags=["products"])
 
 @router.get("", response_model=ProductListResponse)
 async def list_products(
-    category: str | None = Query(default=None),
-    limit: int = Query(default=20, ge=1, le=100),
-    skip: int = Query(default=0, ge=0),
+    category: str | None = None,
+    limit: int = 20,
+    skip: int = 0,
     db: AsyncSession = Depends(get_db),
 ) -> ProductListResponse:
     stmt = select(Product)
@@ -74,7 +74,11 @@ async def get_product(product_id: int, db: AsyncSession = Depends(get_db)) -> Pr
 
 
 @router.post("", response_model=ProductRead, status_code=status.HTTP_201_CREATED)
-async def create_product(payload: ProductCreate, db: AsyncSession = Depends(get_db)) -> ProductRead:
+async def create_product(
+    payload: ProductCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_roles("seller", "admin")),
+) -> ProductRead:
     existing = await db.execute(select(Product).where(Product.slug == payload.slug))
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Product slug already exists")
@@ -88,7 +92,7 @@ async def create_product(payload: ProductCreate, db: AsyncSession = Depends(get_
         price=payload.price,
         is_free=payload.is_free,
         status=payload.status,
-        seller_id=1,
+        seller_id=current_user.id,
     )
     db.add(item)
     await db.commit()
@@ -114,10 +118,13 @@ async def update_product(
     product_id: int,
     payload: ProductUpdate,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> ProductRead:
     item = await db.get(Product, product_id)
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+    if item.seller_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You can only edit your own products")
 
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(item, field, value)

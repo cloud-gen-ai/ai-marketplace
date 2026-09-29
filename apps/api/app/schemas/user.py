@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -9,7 +11,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    pass
+    password: str = Field(..., min_length=6, max_length=255)
 
 
 class UserRead(UserBase):
@@ -17,3 +19,9 @@ class UserRead(UserBase):
     created_at: str
 
     model_config = {"from_attributes": True}
+
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    avatar_url: str | None = None
+    role: str | None = None

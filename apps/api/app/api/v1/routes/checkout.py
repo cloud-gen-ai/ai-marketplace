@@ -1,12 +1,16 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Request
+
+from app.core.security import get_current_user
+from app.services.payment_service import create_checkout_session
 
 router = APIRouter(prefix="/checkout", tags=["checkout"])
 
 
 @router.post("/session")
-async def create_checkout_session() -> dict:
-    return {
-        "status": "created",
-        "checkout_url": "https://example.com/checkout/demo",
-        "message": "Stripe checkout session placeholder. Wire real Stripe session creation in the next phase.",
-    }
+async def create_checkout_session_route(
+    product_id: int,
+    plan_name: str = "pro",
+    current_user=Depends(get_current_user),
+) -> dict:
+    session = await create_checkout_session(product_id=product_id, user_id=current_user.id, plan_name=plan_name)
+    return session
