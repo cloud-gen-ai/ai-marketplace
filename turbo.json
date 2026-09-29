@@ -1,0 +1,20 @@
+const { defineConfig } = require('turbo');
+
+module.exports = defineConfig({
+  tasks: {
+    build: {
+      dependsOn: ['^build'],
+      outputs: ['.next/**', 'dist/**', 'build/**']
+    },
+    lint: {
+      outputs: []
+    },
+    'check-types': {
+      outputs: []
+    },
+    dev: {
+      cache: false,
+      persistent: true
+    }
+  }
+});
