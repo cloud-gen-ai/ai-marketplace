@@ -1,13 +1,10 @@
-from app.models.user import User
-from app.models.product import Product
-from app.models.subscription import Subscription
-from app.models.license import License
-from app.models.review import Review
+from app.core.database import Base
 
-__all__ = [
-    "User",
-    "Product",
-    "Subscription",
-    "License",
-    "Review",
-]
+# Import all models so SQLAlchemy metadata sees them before create_all().
+from app.models.license import License  # noqa: F401
+from app.models.product import Product  # noqa: F401
+from app.models.review import Review  # noqa: F401
+from app.models.subscription import Subscription  # noqa: F401
+from app.models.user import User  # noqa: F401
+
+__all__ = ["Base"]
