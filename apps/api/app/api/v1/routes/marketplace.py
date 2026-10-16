@@ -8,6 +8,7 @@ from app.models.product import Product
 from app.models.user import User
 from app.schemas.product import ProductRead, ProductUpdate
 from app.services.marketplace_cache import get_cached_marketplace_products, cache_marketplace_products
+from app.services.supabase_catalog import fetch_approved_products
 
 router = APIRouter(prefix="/marketplace", tags=["marketplace"])
 
@@ -23,6 +24,11 @@ async def search_products(
     cached = get_cached_marketplace_products(category=category, q=q, page=page, limit=limit)
     if cached is not None:
         return cached
+
+    supabase_payload = await fetch_approved_products(q=q, category=category, page=page, limit=limit)
+    if supabase_payload is not None:
+        cache_marketplace_products(supabase_payload, category=category, q=q, page=page, limit=limit)
+        return supabase_payload
 
     stmt = select(Product)
     if category:

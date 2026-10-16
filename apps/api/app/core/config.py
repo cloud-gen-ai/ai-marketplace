@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     APP_URL: str = os.getenv("APP_URL", "https://ai-marketplace-drab.vercel.app")
     CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
     FREE_TRIAL_DAYS: int = int(os.getenv("FREE_TRIAL_DAYS", "30"))
+    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
+    SUPABASE_ANON_KEY: str = os.getenv("SUPABASE_ANON_KEY", "")
 
     # Database
     DATABASE_URL: str = os.getenv(
