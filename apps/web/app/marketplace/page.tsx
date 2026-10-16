@@ -30,7 +30,7 @@ export default async function MarketplacePage() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <strong style={{ fontSize: 26 }}>{formatPrice(product.price)}</strong>
-              <a href={`/products/${product.slug}`} style={{ textDecoration: 'none', background: '#111827', color: 'white', padding: '10px 14px', borderRadius: 12 }}>View details</a>
+              <a href={`/products/${product.slug}`} style={{ textDecoration: 'none', background: '#111827', color: 'white', padding: '10px 14px', borderRadius: 12 }}>{product.slug.startsWith('skill-pack-') ? 'Read skills' : 'View details'}</a>
             </div>
           </article>
         ))}

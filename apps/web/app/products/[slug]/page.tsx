@@ -30,7 +30,7 @@ export default async function ProductPage({ params }) {
 
         {isImportedSkillPack && (
           <div style={{ marginTop: 20, padding: 16, borderRadius: 14, background: '#ecfdf5', color: '#065f46', lineHeight: 1.5 }}>
-            This archive contains the 18 imported skill packs from <code>skill-main.zip</code>.
+            Read the included skills first. You can download this pack from the reader when you are ready.
           </div>
         )}
 
@@ -40,8 +40,8 @@ export default async function ProductPage({ params }) {
             <div style={{ fontSize: '2.2rem', fontWeight: 800 }}>{formatPrice(product.price)}</div>
           </div>
           {isImportedSkillPack ? (
-            <a href="/downloads/skill-main.zip" download style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
-              Download skill archive
+            <a href={`/skills/${product.slug}`} style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
+              Access & read skills
             </a>
           ) : (
             <a href="/pricing" style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
