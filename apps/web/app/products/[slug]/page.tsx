@@ -5,6 +5,7 @@ import { getMarketplaceProducts } from '../../../lib/marketplace';
 export default async function ProductPage({ params }) {
   const productCatalog = await getMarketplaceProducts();
   const product = productCatalog.find((entry) => entry.slug === params.slug);
+  const isImportedSkillPack = params.slug.startsWith('skill-pack-');
 
   if (!product) {
     notFound();
@@ -27,12 +28,26 @@ export default async function ProductPage({ params }) {
           ))}
         </div>
 
+        {isImportedSkillPack && (
+          <div style={{ marginTop: 20, padding: 16, borderRadius: 14, background: '#ecfdf5', color: '#065f46', lineHeight: 1.5 }}>
+            This archive contains the 18 imported skill packs from <code>skill-main.zip</code>.
+          </div>
+        )}
+
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
           <div>
             <div style={{ color: '#6b7280', fontSize: 14 }}>Starting at</div>
             <div style={{ fontSize: '2.2rem', fontWeight: 800 }}>{formatPrice(product.price)}</div>
           </div>
-          <button style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', border: 'none', fontWeight: 700 }}>Get access</button>
+          {isImportedSkillPack ? (
+            <a href="/downloads/skill-main.zip" download style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
+              Download skill archive
+            </a>
+          ) : (
+            <a href="/pricing" style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
+              Start free trial
+            </a>
+          )}
         </div>
       </div>
     </main>
