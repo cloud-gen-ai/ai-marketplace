@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     APP_ENV: str = os.getenv("APP_ENV", "development")
     API_V1_STR: str = os.getenv("API_V1_STR", "/api/v1")
     PROJECT_NAME: str = os.getenv("PROJECT_NAME", "AI Marketplace API")
+    APP_URL: str = os.getenv("APP_URL", "https://ai-marketplace-drab.vercel.app")
+    CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "*")
+    FREE_TRIAL_DAYS: int = int(os.getenv("FREE_TRIAL_DAYS", "30"))
 
     # Database
     DATABASE_URL: str = os.getenv(
@@ -27,6 +30,8 @@ class Settings(BaseSettings):
     # Stripe
     STRIPE_SECRET_KEY: str = os.getenv("STRIPE_SECRET_KEY", "sk_test_placeholder")
     STRIPE_WEBHOOK_SECRET: str = os.getenv("STRIPE_WEBHOOK_SECRET", "whsec_placeholder")
+    STRIPE_PRO_PRICE_ID: str = os.getenv("STRIPE_PRO_PRICE_ID", "price_placeholder")
+    STRIPE_TEAM_PRICE_ID: str = os.getenv("STRIPE_TEAM_PRICE_ID", "price_placeholder")
 
     # Auth
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")

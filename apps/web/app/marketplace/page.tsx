@@ -1,9 +1,18 @@
-import { productCatalog, formatPrice } from '@ai-marketplace/shared';
+import { formatPrice } from '@ai-marketplace/shared';
+import { getMarketplaceProducts } from '../../lib/marketplace';
 
-export default function MarketplacePage() {
+export default async function MarketplacePage() {
+  const productCatalog = await getMarketplaceProducts();
+
   return (
     <main style={{ padding: 32, maxWidth: 1200, margin: '0 auto' }}>
-      <h1 style={{ fontSize: '2.4rem', marginBottom: 24 }}>Marketplace</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'end', marginBottom: 24 }}>
+        <div>
+          <div style={{ color: '#0f766e', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live catalog</div>
+          <h1 style={{ fontSize: '2.4rem', margin: '8px 0 0' }}>Marketplace</h1>
+        </div>
+        <a href="/pricing" style={{ color: '#111827', fontWeight: 700 }}>First month free →</a>
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 20 }}>
         {productCatalog.map((product) => (

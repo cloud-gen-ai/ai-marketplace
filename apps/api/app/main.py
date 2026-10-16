@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from app.api.v1.api import api_router
@@ -15,6 +16,15 @@ app = FastAPI(
     description="Production-ready FastAPI backend for an AI marketplace with subscriptions, licenses, and Stripe integration.",
     docs_url="/docs",
     redoc_url="/redoc",
+)
+
+origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(',') if origin.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins or ['*'],
+    allow_credentials=bool(origins and origins != ['*']),
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 
