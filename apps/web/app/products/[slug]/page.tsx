@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation';
-import { productCatalog, formatPrice } from '@ai-marketplace/shared';
+import { formatPrice } from '@ai-marketplace/shared';
+import { getMarketplaceProducts } from '../../../lib/marketplace';
 
-export default function ProductPage({ params }) {
+export default async function ProductPage({ params }) {
+  const productCatalog = await getMarketplaceProducts();
   const product = productCatalog.find((entry) => entry.slug === params.slug);
 
   if (!product) {
