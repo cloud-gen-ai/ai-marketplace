@@ -69,6 +69,8 @@ create index if not exists idx_products_status on products(status);
 create index if not exists idx_products_created_at on products(created_at desc);
 create index if not exists idx_reviews_product_id on reviews(product_id);
 
+alter table products add column if not exists metadata jsonb not null default '{}'::jsonb;
+
 alter table products enable row level security;
 alter table plans enable row level security;
 drop policy if exists "public approved products" on products;

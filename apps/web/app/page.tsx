@@ -1,6 +1,9 @@
-import { productCatalog, formatPrice } from '@ai-marketplace/shared';
+import { formatPrice } from '@ai-marketplace/shared';
+import { getMarketplaceProducts } from '../lib/marketplace';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const productCatalog = await getMarketplaceProducts();
+
   return (
     <main style={{ padding: '32px', fontFamily: 'system-ui, sans-serif' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
