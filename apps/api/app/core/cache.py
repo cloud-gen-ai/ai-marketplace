@@ -9,8 +9,14 @@ redis = Redis(
 )
 
 
+def _cache_enabled() -> bool:
+    return bool(settings.REDIS_URL and settings.REDIS_TOKEN and 'example.invalid' not in settings.REDIS_URL)
+
+
 def cache_get(key: str):
     """Get value from Redis cache"""
+    if not _cache_enabled():
+        return None
     try:
         value = redis.get(key)
         return value
@@ -21,6 +27,8 @@ def cache_get(key: str):
 
 def cache_set(key: str, value: str, ttl_seconds: int = 300):
     """Set value in Redis cache with TTL"""
+    if not _cache_enabled():
+        return
     try:
         redis.setex(key, ttl_seconds, value)
     except Exception as e:
@@ -29,6 +37,8 @@ def cache_set(key: str, value: str, ttl_seconds: int = 300):
 
 def cache_delete(*keys: str):
     """Delete keys from Redis cache"""
+    if not _cache_enabled():
+        return
     try:
         if keys:
             redis.delete(*keys)
@@ -38,6 +48,8 @@ def cache_delete(*keys: str):
 
 def cache_exists(key: str) -> bool:
     """Check if key exists in Redis cache"""
+    if not _cache_enabled():
+        return False
     try:
         return redis.exists(key) > 0
     except Exception as e:
