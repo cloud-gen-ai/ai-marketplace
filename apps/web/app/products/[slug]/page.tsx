@@ -3,13 +3,14 @@ import { formatPrice } from '@ai-marketplace/shared';
 import { getMarketplaceProducts } from '../../../lib/marketplace';
 
 export default async function ProductPage({ params }) {
-  const productCatalog = await getMarketplaceProducts();
+  const productCatalog = await getMarketplaceProducts({ fresh: true });
   const product = productCatalog.find((entry) => entry.slug === params.slug);
-  const isImportedSkillPack = params.slug.startsWith('skill-pack-');
 
   if (!product) {
     notFound();
   }
+
+  const isSkillPack = params.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length);
 
   return (
     <main style={{ maxWidth: 980, margin: '0 auto', padding: 32 }}>
@@ -28,7 +29,7 @@ export default async function ProductPage({ params }) {
           ))}
         </div>
 
-        {isImportedSkillPack && (
+        {isSkillPack && (
           <div style={{ marginTop: 20, padding: 16, borderRadius: 14, background: '#ecfdf5', color: '#065f46', lineHeight: 1.5 }}>
             Read the included skills first. You can download this pack from the reader when you are ready.
           </div>
@@ -39,7 +40,7 @@ export default async function ProductPage({ params }) {
             <div style={{ color: '#6b7280', fontSize: 14 }}>Starting at</div>
             <div style={{ fontSize: '2.2rem', fontWeight: 800 }}>{formatPrice(product.price)}</div>
           </div>
-          {isImportedSkillPack ? (
+          {isSkillPack ? (
             <a href={`/skills/${product.slug}`} style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
               Access & read skills
             </a>

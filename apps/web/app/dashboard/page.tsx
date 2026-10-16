@@ -1,7 +1,10 @@
 export default function DashboardPage() {
   return (
     <main style={{ maxWidth: 1200, margin: '0 auto', padding: 32 }}>
-      <h1>Seller dashboard</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div><h1 style={{ marginBottom: 6 }}>Seller dashboard</h1><p style={{ color: '#64748b' }}>Create, teach, and publish reusable skills.</p></div>
+        <a href="/studio" style={{ background: '#0f172a', color: 'white', borderRadius: 12, padding: '12px 16px', textDecoration: 'none', fontWeight: 800 }}>+ Create skill</a>
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 20, marginTop: 24 }}>
         {[
           { title: 'Products', value: '12' },

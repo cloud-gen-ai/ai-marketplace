@@ -11,7 +11,10 @@ export default async function MarketplacePage() {
           <div style={{ color: '#0f766e', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live catalog</div>
           <h1 style={{ fontSize: '2.4rem', margin: '8px 0 0' }}>Marketplace</h1>
         </div>
-        <a href="/pricing" style={{ color: '#111827', fontWeight: 700 }}>First month free →</a>
+        <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+          <a href="/studio" style={{ color: '#0f766e', fontWeight: 800 }}>Create a skill →</a>
+          <a href="/pricing" style={{ color: '#111827', fontWeight: 700 }}>First month free →</a>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 20 }}>
@@ -30,7 +33,7 @@ export default async function MarketplacePage() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <strong style={{ fontSize: 26 }}>{formatPrice(product.price)}</strong>
-              <a href={`/products/${product.slug}`} style={{ textDecoration: 'none', background: '#111827', color: 'white', padding: '10px 14px', borderRadius: 12 }}>{product.slug.startsWith('skill-pack-') ? 'Read skills' : 'View details'}</a>
+              <a href={`/products/${product.slug}`} style={{ textDecoration: 'none', background: '#111827', color: 'white', padding: '10px 14px', borderRadius: 12 }}>{product.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length) ? 'Read skills' : 'View details'}</a>
             </div>
           </article>
         ))}

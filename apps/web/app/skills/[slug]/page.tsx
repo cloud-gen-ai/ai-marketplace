@@ -3,13 +3,40 @@ import { formatPrice } from '@ai-marketplace/shared';
 import { getMarketplaceProducts } from '../../../lib/marketplace';
 import { getSkillPack } from '../../../lib/skill-packs';
 
-export default async function SkillReaderPage({ params }) {
-  const pack = getSkillPack(params.slug);
-  if (!pack) notFound();
+function readableSkillName(value: string): string {
+  return value.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+}
 
-  const products = await getMarketplaceProducts();
+function guideForSkill(skill: string, packTitle: string): string[] {
+  const name = readableSkillName(skill);
+  return [
+    `${name} is a reusable workflow inside ${packTitle}.`,
+    `Use it to turn a clear ${name.toLowerCase()} objective into structured, reviewable output.`,
+    'Start with the context, constraints, and expected format, then validate the result before publishing it.',
+  ];
+}
+
+export default async function SkillReaderPage({ params, searchParams }) {
+  const products = await getMarketplaceProducts({ fresh: true });
   const product = products.find((entry) => entry.slug === params.slug);
-  if (!product) notFound();
+  const staticPack = getSkillPack(params.slug);
+  const metadataSkills = product?.metadata?.skills?.filter((skill): skill is string => typeof skill === 'string');
+  const pack = staticPack || (product && metadataSkills?.length ? {
+    slug: product.slug,
+    directory: product.slug,
+    module: 'skill_package',
+    title: product.title,
+    category: product.category,
+    description: product.description,
+    skills: metadataSkills,
+  } : undefined);
+  if (!product || !pack) notFound();
+
+  const selectedSkill = (searchParams?.skill && pack.skills.includes(searchParams.skill)) ? searchParams.skill : pack.skills[0];
+  const selectedSession = product.metadata?.sessions?.find((session) => session.title === selectedSkill);
+  const guide = selectedSession ? [selectedSession.content] : guideForSkill(selectedSkill, pack.title);
+  const downloadHref = staticPack ? `/downloads/skill-packs/${pack.slug}.zip` : `/api/skills/${pack.slug}/download`;
+  const downloadLabel = staticPack ? 'Download this pack' : 'Download reader guide';
 
   return (
     <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '28px 20px 64px' }}>
@@ -33,16 +60,33 @@ export default async function SkillReaderPage({ params }) {
             <p style={{ color: '#64748b', marginTop: 0 }}>Review what is inside before downloading.</p>
             <div style={{ display: 'grid', gap: 10 }}>
               {pack.skills.map((skill, index) => (
-                <div key={skill} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 12px', borderRadius: 12, background: '#f8fafc' }}>
+                <a key={skill} href={`/skills/${pack.slug}?skill=${encodeURIComponent(skill)}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 12px', borderRadius: 12, background: selectedSkill === skill ? '#ccfbf1' : '#f8fafc', border: selectedSkill === skill ? '1px solid #5eead4' : '1px solid transparent', textDecoration: 'none' }}>
                   <span style={{ width: 26, height: 26, borderRadius: 999, display: 'grid', placeItems: 'center', background: '#ccfbf1', color: '#0f766e', fontWeight: 800, fontSize: 12 }}>{index + 1}</span>
-                  <code style={{ color: '#1e293b' }}>{skill}</code>
-                </div>
+                  <code style={{ color: '#1e293b', flex: 1 }}>{readableSkillName(skill)}</code>
+                  <span style={{ color: '#0f766e', fontSize: 12, fontWeight: 800 }}>Read →</span>
+                </a>
               ))}
             </div>
           </div>
 
           <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 22, padding: 24 }}>
-            <h2 style={{ margin: '0 0 8px', fontSize: 22 }}>How to use it</h2>
+            <div style={{ color: '#0f766e', fontWeight: 800, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Read mode</div>
+            <h2 style={{ margin: '8px 0', fontSize: 22 }}>{readableSkillName(selectedSkill)}</h2>
+            <div style={{ display: 'grid', gap: 10, color: '#475569', lineHeight: 1.65 }}>
+              {guide.map((paragraph) => <p key={paragraph} style={{ margin: 0 }}>{paragraph}</p>)}
+            </div>
+            {product.metadata?.sessions && product.metadata.sessions.length > 0 && (
+              <div style={{ marginTop: 20, paddingTop: 18, borderTop: '1px solid #e2e8f0' }}>
+                <h3 style={{ margin: '0 0 10px' }}>Learning sessions</h3>
+                {product.metadata.sessions.map((session) => (
+                  <details key={session.title} style={{ marginBottom: 8 }}>
+                    <summary style={{ cursor: 'pointer', fontWeight: 700 }}>{session.title}</summary>
+                    <p style={{ color: '#475569', lineHeight: 1.6 }}>{session.content}</p>
+                  </details>
+                ))}
+              </div>
+            )}
+            <h3 style={{ margin: '24px 0 8px', fontSize: 18 }}>How to use it</h3>
             <ol style={{ color: '#475569', lineHeight: 1.8, paddingLeft: 22 }}>
               <li>Review the skill names and choose the workflows you need.</li>
               <li>Download the pack when you are ready to run it locally.</li>
@@ -50,7 +94,7 @@ export default async function SkillReaderPage({ params }) {
             </ol>
             <pre style={{ overflowX: 'auto', background: '#0f172a', color: '#dbeafe', borderRadius: 14, padding: 16, fontSize: 13, lineHeight: 1.6 }}>{`python -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\npython -m ${pack.module} --list`}</pre>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 18 }}>
-              <a href={`/downloads/skill-packs/${pack.slug}.zip`} download style={{ padding: '13px 17px', borderRadius: 12, background: '#0f172a', color: 'white', textDecoration: 'none', fontWeight: 800 }}>Download this pack</a>
+              <a href={downloadHref} download style={{ padding: '13px 17px', borderRadius: 12, background: '#0f172a', color: 'white', textDecoration: 'none', fontWeight: 800 }}>{downloadLabel}</a>
               <a href="/marketplace" style={{ padding: '13px 17px', borderRadius: 12, border: '1px solid #cbd5e1', color: '#334155', textDecoration: 'none', fontWeight: 800 }}>Browse other packs</a>
             </div>
           </div>
