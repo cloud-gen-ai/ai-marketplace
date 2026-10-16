@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import { productCatalog, formatPrice } from '@ai-marketplace/shared';
 
-export default function ProductPage({ params }) {
-  const product = productCatalog.find((entry) => entry.slug === params.slug);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = productCatalog.find((entry) => entry.slug === slug);
 
   if (!product) {
     notFound();

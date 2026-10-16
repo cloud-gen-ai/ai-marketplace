@@ -1,1 +1,3 @@
-# This file is ignored by pnpm and is only used for workspace metadata.
+packages:
+  - 'apps/*'
+  - 'packages/*'
