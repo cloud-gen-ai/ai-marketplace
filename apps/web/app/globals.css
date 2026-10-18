@@ -85,6 +85,13 @@ select {
   text-decoration: none;
 }
 
+.site-nav-priority-group,
+.site-nav-secondary-group {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
 .site-nav-priority {
   color: #0f172a;
   font-weight: 900;
@@ -1312,6 +1319,13 @@ select {
     scrollbar-width: none;
   }
 
+  .site-nav-priority-group,
+  .site-nav-secondary-group {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
   .site-nav-links::-webkit-scrollbar {
     display: none;
   }
@@ -1346,6 +1360,61 @@ select {
 }
 
 @media (max-width: 1100px), (pointer: coarse) {
+  .site-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px 16px;
+  }
+
+  .site-nav-actions {
+    justify-self: end;
+  }
+
+  .site-nav-links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    justify-content: stretch;
+    gap: 10px;
+    width: 100%;
+    overflow: visible;
+    padding: 2px 0 4px;
+    white-space: normal;
+  }
+
+  .site-nav-priority-group,
+  .site-nav-secondary-group {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .site-nav-priority,
+  .site-nav-secondary-group a {
+    display: flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border: 1px solid #dbe4ee;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #334155;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .site-nav-priority {
+    background: #ecfdf5;
+    border-color: #99f6e4;
+    color: #0f766e;
+  }
+
+  .site-nav-divider {
+    display: none;
+  }
+
   .feature-grid,
   .product-grid,
   .course-grid,
