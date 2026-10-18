@@ -15,13 +15,21 @@ export function ProtectedDownloadButton({ href, label, returnPath }: { href: str
     setNeedsLogin(false);
     setDownloadReady(false);
     setMessage('');
+    let user: Awaited<ReturnType<typeof getCurrentUser>>;
     try {
-      const user = await getCurrentUser();
-      if (!user) {
-        setNeedsLogin(true);
-        return;
-      }
+      user = await getCurrentUser();
+    } catch {
+      setMessage('We could not verify your session. Please refresh the page and try again.');
+      setChecking(false);
+      return;
+    }
+    if (!user) {
+      setNeedsLogin(true);
+      setChecking(false);
+      return;
+    }
 
+    try {
       // Fetch first so the browser has a complete file to download. This is
       // more reliable on mobile browsers than clicking a hidden link after an
       // asynchronous session check. The visible fallback below also handles
