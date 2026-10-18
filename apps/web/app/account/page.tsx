@@ -119,7 +119,7 @@ export default function AccountPage() {
     setError('');
     setMessage('');
     try {
-      await requestPasswordReset(forgotEmail.trim(), `${window.location.origin}/account?mode=reset`);
+      await requestPasswordReset(forgotEmail.trim(), `${window.location.origin}/account`);
       setMessage('If an account exists for that email, a password reset link has been sent. Check your inbox and spam folder.');
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Could not send the reset email.');
