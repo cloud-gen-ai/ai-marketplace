@@ -64,6 +64,7 @@ export const toolGuides = [
   { name: 'Amazon Q Developer', href: 'https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/' },
   { name: 'Cursor', href: 'https://docs.cursor.com/' },
   { name: 'MCP', href: 'https://modelcontextprotocol.io/introduction' },
+  { name: 'Open-source MCP servers', href: '/mcp-servers' },
   { name: 'RAG systems', href: '/courses' },
   { name: 'Agent operations', href: '/marketplace' },
 ];

@@ -5,6 +5,7 @@ import { SiteNav } from '../components/site-nav';
 import { ProductCard } from '../components/product-card';
 import { corporateServices, insightCatalog, learningPaths, platformFeatures, toolGuides } from '../lib/experience';
 import { CommunityFeedback } from '../components/community-feedback';
+import { mcpServers } from '../lib/mcp-servers';
 
 export default async function HomePage() {
   const productCatalog = await getMarketplaceProducts();
@@ -65,6 +66,11 @@ export default async function HomePage() {
           <div className="section-heading" style={{ marginBottom: 24 }}><div><div className="eyebrow" style={{ color: '#99f6e4' }}>Work with your stack</div><h2 style={{ color: 'white' }}>Guidance for the tools and patterns you already use.</h2><p style={{ color: '#94a3b8' }}>Learn the workflow, not just the product name. Explore coding agents, model APIs, MCP, RAG, and operations in one connected library.</p></div></div>
           <div className="tool-strip">{toolGuides.map((tool) => <a key={tool.name} href={tool.href} className="tool-pill" target={tool.href.startsWith('http') ? '_blank' : undefined} rel={tool.href.startsWith('http') ? 'noreferrer' : undefined}>{tool.name}<span aria-hidden="true">↗</span></a>)}</div>
         </div>
+      </section>
+
+      <section className="site-container section-tight">
+        <div className="section-heading"><div><div className="eyebrow">Open-source MCP library</div><h2>Give your AI tools the right connections.</h2><p>Explore carefully selected MCP servers for files, web research, Git, GitHub, memory, and browser automation. Read the source before you connect anything.</p></div><Link href="/mcp-servers" className="text-link" style={{ color: '#0f766e', fontWeight: 900 }}>Browse MCP servers →</Link></div>
+        <div className="mcp-grid mcp-grid-featured">{mcpServers.slice(0, 3).map((server) => <article className="mcp-card" key={server.slug}><div className="card-meta"><span className="course-type">{server.category}</span><span>{server.license}</span></div><h2>{server.name}</h2><p>{server.description}</p><div className="mcp-links"><a href={server.sourceUrl} target="_blank" rel="noreferrer">View source ↗</a><Link href="/mcp-servers">See setup details →</Link></div></article>)}</div>
       </section>
 
       <section className="site-container section">

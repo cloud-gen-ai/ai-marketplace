@@ -15,6 +15,7 @@ export function SiteFooter() {
             <Link href="/courses">AI courses</Link>
             <Link href="/mentoring">One-to-one guidance</Link>
             <Link href="/services">Corporate services</Link>
+            <Link href="/mcp-servers">Open-source MCP servers</Link>
             <Link href="/connect">Book a free demo</Link>
             <Link href="/insights">AI insights</Link>
             <Link href="/feedback">Community feedback</Link>

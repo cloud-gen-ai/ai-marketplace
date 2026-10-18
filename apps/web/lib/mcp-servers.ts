@@ -1,0 +1,26 @@
+export type McpServer = {
+  slug: string;
+  name: string;
+  maintainer: string;
+  category: string;
+  description: string;
+  bestFor: string;
+  sourceUrl: string;
+  docsUrl: string;
+  install: string;
+  license: string;
+  status: string;
+  tags: string[];
+};
+
+/** A curated starting set. Links stay upstream so visitors can review current code and security guidance. */
+export const mcpServers: McpServer[] = [
+  { slug: 'filesystem', name: 'Filesystem', maintainer: 'Model Context Protocol', category: 'Files and documents', description: 'A reference server for controlled file operations with configurable allowed directories.', bestFor: 'Local document workflows, project files, and RAG ingestion prototypes.', sourceUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem', docsUrl: 'https://modelcontextprotocol.io/docs', install: 'npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/files', license: 'MIT / Apache-2.0', status: 'Official reference implementation', tags: ['local files', 'RAG', 'stdio'] },
+  { slug: 'fetch', name: 'Fetch', maintainer: 'Model Context Protocol', category: 'Web content', description: 'Fetches web pages and converts content into a format that language models can use efficiently.', bestFor: 'Research assistants, URL summarization, and source-grounded workflows.', sourceUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/fetch', docsUrl: 'https://modelcontextprotocol.io/docs', install: 'npx -y @modelcontextprotocol/server-fetch', license: 'MIT / Apache-2.0', status: 'Official reference implementation', tags: ['web', 'research', 'content'] },
+  { slug: 'git', name: 'Git', maintainer: 'Model Context Protocol', category: 'Developer tools', description: 'Provides tools to read, search, and inspect Git repositories through an MCP client.', bestFor: 'Code review, repository discovery, release notes, and agent-assisted development.', sourceUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/git', docsUrl: 'https://modelcontextprotocol.io/docs', install: 'uvx mcp-server-git --repository /path/to/repository', license: 'MIT / Apache-2.0', status: 'Official reference implementation', tags: ['Git', 'code', 'developer'] },
+  { slug: 'memory', name: 'Memory', maintainer: 'Model Context Protocol', category: 'Knowledge and memory', description: 'A knowledge-graph based persistent memory reference server for multi-session context.', bestFor: 'Personal assistants, project context, and repeatable agent workflows.', sourceUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/memory', docsUrl: 'https://modelcontextprotocol.io/docs', install: 'npx -y @modelcontextprotocol/server-memory', license: 'MIT / Apache-2.0', status: 'Official reference implementation', tags: ['memory', 'knowledge graph', 'stdio'] },
+  { slug: 'sequential-thinking', name: 'Sequential Thinking', maintainer: 'Model Context Protocol', category: 'Reasoning support', description: 'A reference server that exposes structured thought-sequence tools for complex problem solving.', bestFor: 'Planning, decomposition, architecture reviews, and decision logs.', sourceUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking', docsUrl: 'https://modelcontextprotocol.io/docs', install: 'npx -y @modelcontextprotocol/server-sequential-thinking', license: 'MIT / Apache-2.0', status: 'Official reference implementation', tags: ['planning', 'reasoning', 'workflows'] },
+  { slug: 'time', name: 'Time', maintainer: 'Model Context Protocol', category: 'Utilities', description: 'Converts time and time zones so agents can work with schedules and localized deadlines.', bestFor: 'Scheduling, calendar assistants, global support, and deadline-aware agents.', sourceUrl: 'https://github.com/modelcontextprotocol/servers/tree/main/src/time', docsUrl: 'https://modelcontextprotocol.io/docs', install: 'npx -y @modelcontextprotocol/server-time', license: 'MIT / Apache-2.0', status: 'Official reference implementation', tags: ['time zones', 'scheduling', 'utility'] },
+  { slug: 'github', name: 'GitHub MCP Server', maintainer: 'GitHub', category: 'Code and collaboration', description: "GitHub's official MCP server for repositories, code, issues, pull requests, and workflow automation.", bestFor: 'Repository assistants, issue triage, code search, and controlled engineering automation.', sourceUrl: 'https://github.com/github/github-mcp-server', docsUrl: 'https://github.com/github/github-mcp-server#readme', install: 'docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN=<token> ghcr.io/github/github-mcp-server', license: 'MIT', status: 'Official open-source server', tags: ['GitHub', 'issues', 'pull requests'] },
+  { slug: 'playwright', name: 'Playwright MCP', maintainer: 'Microsoft', category: 'Browser automation', description: 'A browser automation MCP server powered by Playwright and accessibility snapshots.', bestFor: 'Web QA, research flows, form testing, and agentic browser tasks.', sourceUrl: 'https://github.com/microsoft/playwright-mcp', docsUrl: 'https://github.com/microsoft/playwright-mcp#readme', install: 'npx @playwright/mcp@latest', license: 'Apache-2.0', status: 'Official open-source server', tags: ['browser', 'testing', 'automation'] },
+];

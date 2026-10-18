@@ -321,6 +321,93 @@ select {
   gap: 16px;
 }
 
+.mcp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mcp-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 23px;
+  border: 1px solid #dbe4ee;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.045);
+}
+
+.mcp-card h2 {
+  margin: 16px 0 7px;
+  color: #0f172a;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+}
+
+.mcp-card p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.mcp-card .tag-row { margin: 16px 0; }
+
+.mcp-maintainer {
+  margin-bottom: 13px !important;
+  color: #0f766e !important;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mcp-use-case {
+  display: grid;
+  gap: 4px;
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 14px;
+  background: #f0fdfa;
+}
+
+.mcp-use-case strong { color: #0f766e; font-size: 12px; }
+.mcp-use-case span { color: #334155; font-size: 13px; line-height: 1.5; }
+
+.mcp-install {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 14px;
+  background: #0f172a;
+}
+
+.mcp-install div { color: #99f6e4; font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+.mcp-install code { color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; line-height: 1.55; overflow-wrap: anywhere; }
+
+.mcp-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 19px;
+}
+
+.mcp-links a { color: #0f766e; font-size: 13px; font-weight: 900; text-decoration: none; }
+.mcp-links a:hover { color: #115e59; }
+
+.mcp-safety-panel {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 32px;
+  padding: 36px;
+}
+
+.mcp-safety-panel h2 { max-width: 560px; margin: 10px 0 12px; color: white; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -0.06em; }
+.mcp-safety-panel p { max-width: 560px; margin: 0; color: #cbd5e1; line-height: 1.65; }
+.mcp-safety-list { margin: 0; }
+.mcp-safety-list li { color: #e2e8f0; }
+
 .feature-card,
 .content-card,
 .product-card,
@@ -1179,6 +1266,8 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .mcp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
   .service-request-layout {
     grid-template-columns: 1fr;
   }
@@ -1238,6 +1327,7 @@ select {
   .mentoring-grid,
   .insight-grid,
   .service-grid,
+  .mcp-grid,
   .path-grid,
   .testimonial-grid,
   .feedback-layout,
@@ -1253,6 +1343,11 @@ select {
 
   .service-request-copy {
     padding: 0;
+  }
+
+  .mcp-safety-panel {
+    grid-template-columns: 1fr;
+    padding: 28px 23px;
   }
 
   .cta-panel {

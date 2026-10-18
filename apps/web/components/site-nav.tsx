@@ -12,6 +12,7 @@ export function SiteNav() {
         <Link href="/mentoring">Guidance</Link>
         <Link href="/courses">Courses</Link>
         <Link href="/services">Services</Link>
+        <Link href="/mcp-servers">MCP servers</Link>
         <Link href="/insights">Insights</Link>
       </nav>
       <div className="inline-actions">
