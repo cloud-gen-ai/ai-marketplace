@@ -48,6 +48,15 @@ export default function AccountPage() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [resetCooldown, setResetCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resetCooldown <= 0) return undefined;
+    const timer = window.setInterval(() => {
+      setResetCooldown((seconds) => Math.max(0, seconds - 1));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [resetCooldown]);
 
   useEffect(() => {
     if (adoptRecoverySessionFromUrl()) setMode('reset');
@@ -115,14 +124,22 @@ export default function AccountPage() {
 
   async function sendResetLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (resetCooldown > 0) return;
     setSaving(true);
     setError('');
     setMessage('');
     try {
       await requestPasswordReset(forgotEmail.trim(), `${window.location.origin}/account`);
+      setResetCooldown(60);
       setMessage('If an account exists for that email, a password reset link has been sent. Check your inbox and spam folder.');
     } catch (reason: unknown) {
-      setError(reason instanceof Error ? reason.message : 'Could not send the reset email.');
+      const detail = reason instanceof Error ? reason.message : 'Could not send the reset email.';
+      if (detail.toLowerCase().includes('rate limit')) {
+        setResetCooldown(60);
+        setError('The email provider is temporarily rate-limited. Please wait 60 seconds before trying again. Repeated requests cannot bypass this limit; an administrator must configure custom SMTP for higher-volume recovery emails.');
+      } else {
+        setError(detail);
+      }
     } finally {
       setSaving(false);
     }
@@ -184,7 +201,7 @@ export default function AccountPage() {
             <label style={label}>Registered email<input required type="email" value={forgotEmail} onChange={(event) => setForgotEmail(event.target.value)} placeholder="you@example.com" style={input} /></label>
             {error && <div style={errorBox}>{error}</div>}
             {message && <div style={successBox}>{message}</div>}
-            <button disabled={saving} style={primary}>{saving ? 'Sending…' : 'Send reset link'}</button>
+            <button disabled={saving || resetCooldown > 0} style={{ ...primary, opacity: resetCooldown > 0 ? 0.65 : 1 }}>{saving ? 'Sending…' : resetCooldown > 0 ? `Try again in ${resetCooldown}s` : 'Send reset link'}</button>
           </form>
           <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={switchButton}>Back to sign in</button>
         </section>
