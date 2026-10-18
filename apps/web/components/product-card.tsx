@@ -12,7 +12,7 @@ export function ProductCard({ product }: { product: MarketplaceProduct }) {
       <div className="tag-row">{product.tags.slice(0, 3).map((tag) => <span className="tag" key={tag}>{tag}</span>)}</div>
       <div className="product-footer">
         <span className="product-price">{product.price === 0 ? 'Free' : formatPrice(product.price)}</span>
-        <Link href={isSkillPack ? `/skills/${product.slug}` : `/products/${product.slug}`} className="button-primary" style={{ minHeight: 40, padding: '0 13px', fontSize: 12 }}>{isSkillPack ? 'Read skills' : 'View details'}</Link>
+        <Link href={isSkillPack ? `/skills/${product.slug}` : `/products/${product.slug}`} className="button-primary product-card-action">{isSkillPack ? 'Read skills' : 'View details'}</Link>
       </div>
     </article>
   );

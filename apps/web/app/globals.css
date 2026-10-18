@@ -421,21 +421,35 @@ select {
 }
 
 .product-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
   padding: 21px;
 }
 
 .product-card h3 {
+  display: -webkit-box;
+  min-height: 2.35em;
   margin: 17px 0 10px;
   color: #0f172a;
   font-size: 21px;
   letter-spacing: -0.04em;
+  line-height: 1.18;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .product-card p {
-  min-height: 78px;
+  display: -webkit-box;
+  height: 6.4em;
+  min-height: 0;
   margin: 0;
   color: #64748b;
   line-height: 1.6;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
 }
 
 .card-meta {
@@ -450,7 +464,9 @@ select {
 
 .tag-row {
   display: flex;
+  min-height: 29px;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 7px;
   margin: 16px 0;
 }
@@ -469,13 +485,25 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 18px;
+  min-height: 42px;
+  margin-top: auto;
 }
 
 .product-price {
+  flex: 0 0 auto;
   color: #0f172a;
   font-size: 23px;
   font-weight: 900;
+  white-space: nowrap;
+}
+
+.product-card-action {
+  min-height: 40px;
+  flex: 0 0 auto;
+  padding: 0 13px;
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .cta-panel {
@@ -998,6 +1026,16 @@ select {
   }
 }
 
+@media (max-width: 1100px), (pointer: coarse) {
+  .feature-grid,
+  .product-grid,
+  .course-grid,
+  .insight-grid,
+  .testimonial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 680px) {
   .site-container {
     width: min(100% - 28px, 1160px);
@@ -1034,7 +1072,6 @@ select {
   }
 
   .feature-grid,
-  .product-grid,
   .course-grid,
   .mentoring-grid,
   .insight-grid,
@@ -1065,5 +1102,63 @@ select {
 
   .marketplace-toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .product-card {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .product-card h3 {
+    min-height: 2.8em;
+    margin: 12px 0 8px;
+    font-size: 16px;
+  }
+
+  .product-card p {
+    height: 5.8em;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .product-card .tag-row {
+    min-height: 26px;
+    margin: 12px 0;
+  }
+
+  .product-card .tag {
+    padding: 5px 7px;
+    font-size: 10px;
+  }
+
+  .product-footer {
+    gap: 6px;
+  }
+
+  .product-price {
+    font-size: 18px;
+  }
+
+  .product-card-action {
+    min-height: 36px;
+    padding: 0 9px;
+    border-radius: 11px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 420px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card p {
+    height: auto;
+    -webkit-line-clamp: 3;
   }
 }
