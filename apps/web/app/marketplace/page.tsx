@@ -1,44 +1,24 @@
-import { formatPrice } from '@ai-marketplace/shared';
+import Link from 'next/link';
 import { getMarketplaceProducts } from '../../lib/marketplace';
+import { MarketplaceBrowser } from '../../components/marketplace-browser';
+import { SiteFooter } from '../../components/site-footer';
+import { SiteNav } from '../../components/site-nav';
 
 export default async function MarketplacePage() {
-  const productCatalog = await getMarketplaceProducts();
+  const productCatalog = await getMarketplaceProducts({ fresh: true });
 
   return (
-    <main style={{ padding: 32, maxWidth: 1200, margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'end', marginBottom: 24 }}>
-        <div>
-          <div style={{ color: '#0f766e', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live catalog</div>
-          <h1 style={{ fontSize: '2.4rem', margin: '8px 0 0' }}>Marketplace</h1>
-        </div>
-        <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-          <a href="/studio" style={{ color: '#0f766e', fontWeight: 800 }}>Create a skill →</a>
-          <a href="/account" style={{ color: '#111827', fontWeight: 700 }}>Account →</a>
-          <a href="/pricing" style={{ color: '#111827', fontWeight: 700 }}>First month free →</a>
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 20 }}>
-        {productCatalog.map((product) => (
-          <article key={product.id} style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: 22, padding: 20, boxShadow: '0 10px 30px rgba(15, 23, 42, 0.04)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ background: '#ecfeff', color: '#0f766e', padding: '6px 10px', borderRadius: 999, fontSize: 12, fontWeight: 700 }}>{product.category}</span>
-              <span>{product.rating} ★</span>
-            </div>
-            <h2 style={{ margin: '16px 0 12px', fontSize: 24 }}>{product.title}</h2>
-            <p style={{ color: '#4b5563', lineHeight: 1.6 }}>{product.description}</p>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
-              {product.tags.map((tag) => (
-                <span key={tag} style={{ background: '#f3f4f6', padding: '6px 10px', borderRadius: 999, fontSize: 12 }}>{tag}</span>
-              ))}
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong style={{ fontSize: 26 }}>{formatPrice(product.price)}</strong>
-              <a href={`/products/${product.slug}`} style={{ textDecoration: 'none', background: '#111827', color: 'white', padding: '10px 14px', borderRadius: 12 }}>{product.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length) ? 'Read skills' : 'View details'}</a>
-            </div>
-          </article>
-        ))}
-      </div>
+    <main className="site-shell">
+      <SiteNav />
+      <section className="site-container page-hero">
+        <div className="eyebrow">The skill library</div>
+        <h1>Find the next reusable piece of your AI workflow.</h1>
+        <p>Browse skill packs, project playbooks, and practical assets for coding agents, RAG, agentic systems, security, and operations. Read first, then decide what fits.</p>
+        <div className="hero-actions"><Link href="/courses" className="button-primary">Explore learning paths →</Link><Link href="/mentoring" className="button-secondary">Need a recommendation?</Link></div>
+      </section>
+      <section className="site-container section-tight"><MarketplaceBrowser products={productCatalog} /></section>
+      <section className="site-container section"><div className="cta-panel"><div><div className="eyebrow" style={{ color: '#99f6e4' }}>Can’t find the right fit?</div><h2>Bring your project and get a focused recommendation.</h2><p>A short guidance session can help you choose the right architecture, tool, course, or skill pack before you invest more time.</p></div><Link href="/mentoring" className="button-light">Talk to a mentor</Link></div></section>
+      <SiteFooter />
     </main>
   );
 }

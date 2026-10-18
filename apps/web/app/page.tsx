@@ -1,68 +1,81 @@
-import { formatPrice } from '@ai-marketplace/shared';
+import Link from 'next/link';
 import { getMarketplaceProducts } from '../lib/marketplace';
+import { SiteFooter } from '../components/site-footer';
+import { SiteNav } from '../components/site-nav';
+import { ProductCard } from '../components/product-card';
+import { insightCatalog, learningPaths, platformFeatures, toolGuides } from '../lib/experience';
 
 export default async function HomePage() {
   const productCatalog = await getMarketplaceProducts();
+  const featuredProducts = productCatalog.slice(0, 4);
 
   return (
-    <main style={{ padding: '32px', fontFamily: 'system-ui, sans-serif' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', marginBottom: 32 }}>
-          <div>
-            <div style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b7280' }}>AI Marketplace</div>
-            <h1 style={{ margin: '8px 0 0', fontSize: 'clamp(2.2rem, 5vw, 4rem)' }}>Sell reusable AI skills, prompts, and plugin packs.</h1>
-          </div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-            <a href="/account" style={{ color: '#111827', fontWeight: 700, textDecoration: 'none' }}>Account</a>
-            <a href="/studio" style={{ background: '#111827', color: 'white', borderRadius: 999, padding: '12px 18px', fontWeight: 700, textDecoration: 'none' }}>Create a skill</a>
-          </div>
-        </header>
+    <main className="site-shell">
+      <SiteNav />
 
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 18, marginBottom: 40 }}>
-          {[
-            { label: 'Products', value: '142+' },
-            { label: 'Creators', value: '38' },
-            { label: 'Subscribers', value: '4.1K' },
-            { label: 'Avg rating', value: '4.8/5' }
-          ].map((stat) => (
-            <div key={stat.label} style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: 18, padding: 20 }}>
-              <div style={{ color: '#6b7280', fontSize: 14 }}>{stat.label}</div>
-              <div style={{ fontSize: 28, fontWeight: 800, marginTop: 10 }}>{stat.value}</div>
+      <section className="site-container hero-section">
+        <div>
+          <div className="eyebrow">A practical home for AI builders</div>
+          <h1 className="hero-title">Learn faster. Build better. Ship with confidence.</h1>
+          <p className="hero-copy">Discover reusable AI skills, focused courses, and human guidance for the work that comes after the first demo.</p>
+          <div className="hero-actions">
+            <Link href="/marketplace" className="button-primary">Explore the marketplace <span aria-hidden="true">→</span></Link>
+            <Link href="/mentoring" className="button-secondary">Talk to a mentor</Link>
+          </div>
+          <div className="hero-note"><span>Real project workflows</span><span>Learn at your pace</span><span>Human support when needed</span></div>
+        </div>
+
+        <div className="hero-panel" aria-label="AI Marketplace learning flow">
+          <div className="hero-panel-inner">
+            <div className="hero-panel-label">Your next AI move</div>
+            <h2>One place to go from curious to capable.</h2>
+            <p>Start with a reusable asset. Add context from a course. Bring the hard part to a mentor.</p>
+            <div className="hero-flow">
+              <div className="hero-flow-item"><span className="step-number">1</span><div><strong>Choose a workflow</strong><small>RAG, agents, coding, evaluation</small></div></div>
+              <div className="hero-flow-item"><span className="step-number">2</span><div><strong>Make it yours</strong><small>Read, adapt, and apply it to your project</small></div></div>
+              <div className="hero-flow-item"><span className="step-number">3</span><div><strong>Get unstuck</strong><small>Ask for focused human guidance</small></div></div>
             </div>
-          ))}
-        </section>
-
-        <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h2 style={{ margin: 0 }}>Featured products</h2>
-            <a href="/marketplace" style={{ color: '#111827', fontWeight: 700 }}>Browse all →</a>
           </div>
+        </div>
+      </section>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(250px,1fr))', gap: 18 }}>
-            {productCatalog.map((product) => (
-              <article key={product.id} style={{ border: '1px solid #e5e7eb', borderRadius: 22, padding: 20, background: 'white' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <span style={{ background: '#eef2ff', color: '#3730a3', borderRadius: 999, padding: '6px 10px', fontSize: 12, fontWeight: 700 }}>{product.category}</span>
-                  <span style={{ fontWeight: 700 }}>{product.rating} ★</span>
-                </div>
-                <h3 style={{ margin: '0 0 10px', fontSize: 22 }}>{product.title}</h3>
-                <p style={{ margin: '0 0 16px', color: '#4b5563', lineHeight: 1.6 }}>{product.description}</p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-                  {product.tags.map((tag) => (
-                    <span key={tag} style={{ background: '#f3f4f6', borderRadius: 999, padding: '6px 10px', fontSize: 12, color: '#374151' }}>{tag}</span>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong style={{ fontSize: 26 }}>{formatPrice(product.price)}</strong>
-                  <a href={`/products/${product.slug}`} style={{ background: '#111827', color: 'white', borderRadius: 12, padding: '10px 14px', textDecoration: 'none' }}>
-                    View product
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </div>
+      <section className="site-container section-tight">
+        <div className="section-heading">
+          <div><div className="eyebrow">Everything in one place</div><h2>Useful AI support at every stage of the journey.</h2></div>
+          <Link href="/marketplace" className="text-link" style={{ color: '#0f766e', fontWeight: 900 }}>See all offerings →</Link>
+        </div>
+        <div className="feature-grid">
+          {platformFeatures.map((feature) => <Link key={feature.title} href={feature.href} className="feature-card" style={{ textDecoration: 'none' }}><div className="feature-card-icon">{feature.icon}</div><h3>{feature.title}</h3><p>{feature.description}</p></Link>)}
+        </div>
+      </section>
+
+      <section className="site-container section">
+        <div className="section-heading"><div><div className="eyebrow">Curated marketplace</div><h2>Start with a proven building block.</h2><p>Browse practical packs made for real engineering, product, and career workflows. Read the contents before you download.</p></div><Link href="/marketplace" className="button-secondary">Browse all skills</Link></div>
+        <div className="product-grid">{featuredProducts.map((product) => <ProductCard key={product.id} product={product} />)}</div>
+      </section>
+
+      <section className="site-container section">
+        <div className="surface-dark" style={{ padding: '40px 34px' }}>
+          <div className="section-heading" style={{ marginBottom: 24 }}><div><div className="eyebrow" style={{ color: '#99f6e4' }}>Work with your stack</div><h2 style={{ color: 'white' }}>Guidance for the tools and patterns you already use.</h2><p style={{ color: '#94a3b8' }}>Learn the workflow, not just the product name. Explore coding agents, model APIs, MCP, RAG, and operations in one connected library.</p></div></div>
+          <div className="tool-strip">{toolGuides.map((tool) => <a key={tool.name} href={tool.href} className="tool-pill" target={tool.href.startsWith('http') ? '_blank' : undefined} rel={tool.href.startsWith('http') ? 'noreferrer' : undefined}>{tool.name}<span aria-hidden="true">↗</span></a>)}</div>
+        </div>
+      </section>
+
+      <section className="site-container section">
+        <div className="section-heading"><div><div className="eyebrow">A simple path forward</div><h2>Learn something. Use it. Get better at the work.</h2></div></div>
+        <div className="path-grid">{learningPaths.map((path) => <div className="path-card" key={path.number}><div className="step-number">{path.number}</div><h3 style={{ margin: '24px 0 9px', fontSize: 22 }}>{path.title}</h3><p>{path.description}</p></div>)}</div>
+      </section>
+
+      <section className="site-container section-tight">
+        <div className="section-heading"><div><div className="eyebrow">From the field</div><h2>Ideas to help you make better AI decisions.</h2></div><Link href="/insights" className="text-link" style={{ color: '#0f766e', fontWeight: 900 }}>Read insights →</Link></div>
+        <div className="insight-grid">{insightCatalog.slice(0, 3).map((insight) => <article className="insight-card" key={insight.title}><div className="course-type">{insight.type}</div><h3>{insight.title}</h3><p>{insight.description}</p><a href={insight.href} className="text-link" style={{ display: 'inline-block', marginTop: 20, color: '#0f766e', fontSize: 13, fontWeight: 900 }} target={insight.href.startsWith('http') ? '_blank' : undefined} rel={insight.href.startsWith('http') ? 'noreferrer' : undefined}>Read more →</a></article>)}</div>
+      </section>
+
+      <section className="site-container section">
+        <div className="cta-panel"><div><div className="eyebrow" style={{ color: '#99f6e4' }}>Build your next chapter</div><h2>Have a goal, a project, or a question?</h2><p>Start with the marketplace, explore a course, or book focused guidance. The right next step is usually smaller and more practical than you think.</p></div><div className="inline-actions"><Link href="/courses" className="button-light">Explore courses</Link><Link href="/mentoring" className="button-secondary" style={{ borderColor: '#475569', background: 'transparent', color: 'white' }}>Find guidance</Link></div></div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 }
