@@ -60,6 +60,20 @@ export function buildDemoCalendarUrl(input: Pick<ServiceRequestInput, 'service_t
     details,
     location: 'Google Meet (link shared by NextGen AI after confirmation)',
   });
+  if (input.preferred_date && input.preferred_time) {
+    const [hours, minutes] = input.preferred_time.split(':').map(Number);
+    if (Number.isInteger(hours) && Number.isInteger(minutes)) {
+      const startTotal = hours * 60 + minutes;
+      const endTotal = startTotal + 30;
+      const startDate = new Date(`${input.preferred_date}T00:00:00Z`);
+      const endDate = new Date(startDate);
+      endDate.setUTCDate(endDate.getUTCDate() + Math.floor(endTotal / 1440));
+      const datePart = (date: Date) => date.toISOString().slice(0, 10).replaceAll('-', '');
+      const timePart = (total: number) => `${String(Math.floor((total % 1440) / 60)).padStart(2, '0')}${String(total % 60).padStart(2, '0')}00`;
+      params.set('dates', `${datePart(startDate)}T${timePart(startTotal)}/${datePart(endDate)}T${timePart(endTotal)}`);
+      params.set('ctz', input.timezone || 'Asia/Kolkata');
+    }
+  }
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
