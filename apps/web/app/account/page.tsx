@@ -74,9 +74,11 @@ export default function AccountPage() {
     setMessage('');
     setSaving(true);
     try {
+      let authenticated = false;
       if (mode === 'signup') {
         const result = await signUp(email.trim(), password, { display_name: name.trim(), username: name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') }, `${window.location.origin}/account`);
         if (result.access_token && result.user) {
+          authenticated = true;
           setUser(result.user);
           setProfile(profileFromUser(result.user));
           setMessage('Account created. Your profile is ready to customize.');
@@ -86,10 +88,13 @@ export default function AccountPage() {
         }
       } else {
         const currentUser = await signIn(email.trim(), password);
+        authenticated = true;
         setUser(currentUser);
         setProfile(profileFromUser(currentUser));
         setMessage('Welcome back.');
       }
+      const nextPath = new URLSearchParams(window.location.search).get('next');
+      if (authenticated && nextPath && nextPath.startsWith('/')) window.location.href = nextPath;
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Could not authenticate.');
     } finally {

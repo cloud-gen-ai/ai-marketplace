@@ -50,6 +50,13 @@ export const mentoringOffers = [
   { title: 'Interview preparation', description: 'Practice the conversations that matter, with feedback on depth, structure, and clarity.', points: ['Python and DSA practice', 'GenAI system design', 'Mock behavioral and technical rounds'] },
 ];
 
+export const corporateServices = [
+  { title: 'AI adoption workshops', description: 'Role-based sessions for engineering, product, operations, and leadership teams.' },
+  { title: 'Coding-agent enablement', description: 'Safe workflows for Codex, Claude Code, GitHub Copilot, Amazon Q Developer, and IDE assistants.' },
+  { title: 'RAG and agentic AI delivery', description: 'Architecture, evaluation, observability, security boundaries, and a practical first milestone.' },
+  { title: 'Corporate AI / IT support', description: 'Hands-on help with tooling, access, governance, rollout, and support after the workshop.' },
+];
+
 export const toolGuides = [
   { name: 'OpenAI Codex', href: 'https://developers.openai.com/learn/codex' },
   { name: 'Claude Code', href: 'https://docs.anthropic.com/en/docs/claude-code/getting-started' },

@@ -14,6 +14,8 @@ export function SiteFooter() {
             <Link href="/marketplace">Skill marketplace</Link>
             <Link href="/courses">AI courses</Link>
             <Link href="/mentoring">One-to-one guidance</Link>
+            <Link href="/services">Corporate services</Link>
+            <Link href="/connect">Book a free demo</Link>
             <Link href="/insights">AI insights</Link>
             <Link href="/feedback">Community feedback</Link>
           </div>
@@ -26,7 +28,8 @@ export function SiteFooter() {
           <div>
             <h3>Build with confidence</h3>
             <p>Reusable workflows for coding agents, RAG, agentic systems, and AI operations.</p>
-            <Link href="/account">Create a profile to connect →</Link>
+            <a href="mailto:nextgenai.soulation@gmail.com">nextgenai.soulation@gmail.com</a>
+            <Link href="/connect">Create a profile to connect →</Link>
           </div>
         </div>
         <div className="footer-bottom"><span>© 2026 AI Marketplace</span><span>Learn openly. Build responsibly. Ship deliberately.</span></div>

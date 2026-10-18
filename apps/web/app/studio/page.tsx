@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useEffect } from 'react';
+import Link from 'next/link';
+import { getCurrentUser, type MarketplaceUser } from '../../lib/supabase-auth';
 
 type SessionDraft = { title: string; content: string };
 
@@ -9,6 +12,8 @@ function slugify(value: string): string {
 }
 
 export default function CreatorStudioPage() {
+  const [user, setUser] = useState<MarketplaceUser | null>(null);
+  const [checkingAccount, setCheckingAccount] = useState(true);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('AI Agents');
   const [description, setDescription] = useState('');
@@ -19,6 +24,10 @@ export default function CreatorStudioPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    getCurrentUser().then(setUser).catch(() => setUser(null)).finally(() => setCheckingAccount(false));
+  }, []);
 
   function updateSession(index: number, field: keyof SessionDraft, value: string) {
     setSessions((current) => current.map((session, sessionIndex) => sessionIndex === index ? { ...session, [field]: value } : session));
@@ -95,6 +104,10 @@ export default function CreatorStudioPage() {
       setSaving(false);
     }
   }
+
+  if (checkingAccount) return <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '48px 20px' }}><div style={{ maxWidth: 620, margin: '0 auto', background: 'white', border: '1px solid #e2e8f0', borderRadius: 22, padding: 28 }}><p>Checking your account…</p></div></main>;
+
+  if (!user) return <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '48px 20px' }}><div style={{ maxWidth: 620, margin: '0 auto', background: 'white', border: '1px solid #e2e8f0', borderRadius: 22, padding: 28 }}><div style={{ color: '#0f766e', fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Creator studio</div><h1 style={{ margin: '10px 0' }}>Sign in to publish a skill</h1><p style={{ color: '#64748b', lineHeight: 1.6 }}>Create a marketplace profile first so your published skills and learning sessions have an owner.</p><div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 18 }}><Link href="/account?next=%2Fstudio" style={primaryButton}>Sign in or create account</Link><Link href="/marketplace" style={secondaryButton}>Browse marketplace</Link></div></div></main>;
 
   return (
     <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '28px 20px 64px' }}>

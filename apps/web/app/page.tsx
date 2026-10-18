@@ -3,7 +3,7 @@ import { getMarketplaceProducts } from '../lib/marketplace';
 import { SiteFooter } from '../components/site-footer';
 import { SiteNav } from '../components/site-nav';
 import { ProductCard } from '../components/product-card';
-import { insightCatalog, learningPaths, platformFeatures, toolGuides } from '../lib/experience';
+import { corporateServices, insightCatalog, learningPaths, platformFeatures, toolGuides } from '../lib/experience';
 import { CommunityFeedback } from '../components/community-feedback';
 
 export default async function HomePage() {
@@ -48,6 +48,11 @@ export default async function HomePage() {
         <div className="feature-grid">
           {platformFeatures.map((feature) => <Link key={feature.title} href={feature.href} className="feature-card" style={{ textDecoration: 'none' }}><div className="feature-card-icon">{feature.icon}</div><h3>{feature.title}</h3><p>{feature.description}</p></Link>)}
         </div>
+      </section>
+
+      <section className="site-container section-tight">
+        <div className="section-heading"><div><div className="eyebrow">For teams and companies</div><h2>Practical AI upskilling and delivery support.</h2><p>From workshops to ongoing AI / IT support, connect with us when your team needs a clear path from interest to responsible adoption.</p></div><Link href="/services" className="text-link" style={{ color: '#0f766e', fontWeight: 900 }}>Explore services →</Link></div>
+        <div className="service-grid">{corporateServices.map((service) => <article className="content-card service-card" key={service.title}><div className="feature-card-icon">✦</div><h3>{service.title}</h3><p>{service.description}</p><Link href="/connect" className="text-link" style={{ display: 'inline-block', marginTop: 18, color: '#0f766e', fontWeight: 900 }}>Discuss this →</Link></article>)}</div>
       </section>
 
       <section className="site-container section">
