@@ -15,6 +15,7 @@ export function SiteFooter() {
             <Link href="/courses">AI courses</Link>
             <Link href="/mentoring">One-to-one guidance</Link>
             <Link href="/insights">AI insights</Link>
+            <Link href="/feedback">Community feedback</Link>
           </div>
           <div>
             <h3>For creators</h3>

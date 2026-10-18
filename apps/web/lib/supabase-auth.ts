@@ -21,6 +21,10 @@ function config() {
   return { url, key };
 }
 
+export function getSupabaseConfig() {
+  return config();
+}
+
 function readSession(): Session | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -29,6 +33,10 @@ function readSession(): Session | null {
   } catch {
     return null;
   }
+}
+
+export function getStoredAccessToken(): string | null {
+  return readSession()?.access_token || null;
 }
 
 function saveSession(session: Session | null) {

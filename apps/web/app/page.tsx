@@ -4,6 +4,7 @@ import { SiteFooter } from '../components/site-footer';
 import { SiteNav } from '../components/site-nav';
 import { ProductCard } from '../components/product-card';
 import { insightCatalog, learningPaths, platformFeatures, toolGuides } from '../lib/experience';
+import { CommunityFeedback } from '../components/community-feedback';
 
 export default async function HomePage() {
   const productCatalog = await getMarketplaceProducts();
@@ -70,6 +71,8 @@ export default async function HomePage() {
         <div className="section-heading"><div><div className="eyebrow">From the field</div><h2>Ideas to help you make better AI decisions.</h2></div><Link href="/insights" className="text-link" style={{ color: '#0f766e', fontWeight: 900 }}>Read insights →</Link></div>
         <div className="insight-grid">{insightCatalog.slice(0, 3).map((insight) => <article className="insight-card" key={insight.title}><div className="course-type">{insight.type}</div><h3>{insight.title}</h3><p>{insight.description}</p><a href={insight.href} className="text-link" style={{ display: 'inline-block', marginTop: 20, color: '#0f766e', fontSize: 13, fontWeight: 900 }} target={insight.href.startsWith('http') ? '_blank' : undefined} rel={insight.href.startsWith('http') ? 'noreferrer' : undefined}>Read more →</a></article>)}</div>
       </section>
+
+      <CommunityFeedback />
 
       <section className="site-container section">
         <div className="cta-panel"><div><div className="eyebrow" style={{ color: '#99f6e4' }}>Build your next chapter</div><h2>Have a goal, a project, or a question?</h2><p>Start with the marketplace, explore a course, or book focused guidance. The right next step is usually smaller and more practical than you think.</p></div><div className="inline-actions"><Link href="/courses" className="button-light">Explore courses</Link><Link href="/mentoring" className="button-secondary" style={{ borderColor: '#475569', background: 'transparent', color: 'white' }}>Find guidance</Link></div></div>

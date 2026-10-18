@@ -9,13 +9,14 @@ type ProfileForm = {
   bio: string;
   location: string;
   website: string;
+  avatar_url: string;
   email_updates: boolean;
   public_profile: boolean;
   compact_mode: boolean;
 };
 
 const emptyProfile: ProfileForm = {
-  display_name: '', username: '', bio: '', location: '', website: '',
+  display_name: '', username: '', bio: '', location: '', website: '', avatar_url: '',
   email_updates: true, public_profile: true, compact_mode: false,
 };
 
@@ -28,6 +29,7 @@ function profileFromUser(user: MarketplaceUser): ProfileForm {
     bio: typeof data.bio === 'string' ? data.bio : '',
     location: typeof data.location === 'string' ? data.location : '',
     website: typeof data.website === 'string' ? data.website : '',
+    avatar_url: typeof data.avatar_url === 'string' ? data.avatar_url : '',
     email_updates: settings.email_updates !== false,
     public_profile: settings.public_profile !== false,
     compact_mode: settings.compact_mode === true,
@@ -107,6 +109,7 @@ export default function AccountPage() {
         bio: profile.bio.trim(),
         location: profile.location.trim(),
         website: profile.website.trim(),
+        avatar_url: profile.avatar_url.trim(),
         settings: {
           email_updates: profile.email_updates,
           public_profile: profile.public_profile,
@@ -241,7 +244,7 @@ export default function AccountPage() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, .75fr) minmax(300px, 1.25fr)', gap: 20, marginTop: 24 }}>
           <section style={card}>
-            <div style={{ width: 72, height: 72, borderRadius: 24, display: 'grid', placeItems: 'center', background: '#ccfbf1', color: '#0f766e', fontSize: 28, fontWeight: 900 }}>{(profile.display_name || user.email || 'U').charAt(0).toUpperCase()}</div>
+            {profile.avatar_url && /^https?:\/\//i.test(profile.avatar_url) ? <img src={profile.avatar_url} alt="Profile" style={{ width: 72, height: 72, borderRadius: 24, objectFit: 'cover', border: '1px solid #ccfbf1' }} /> : <div style={{ width: 72, height: 72, borderRadius: 24, display: 'grid', placeItems: 'center', background: '#ccfbf1', color: '#0f766e', fontSize: 28, fontWeight: 900 }}>{(profile.display_name || user.email || 'U').charAt(0).toUpperCase()}</div>}
             <h2 style={{ margin: '18px 0 4px' }}>{profile.display_name || 'Marketplace user'}</h2>
             <p style={{ ...muted, marginTop: 0 }}>{user.email}</p>
             <div style={{ marginTop: 24, padding: 14, borderRadius: 14, background: '#f8fafc', border: '1px solid #e2e8f0' }}><div style={{ ...eyebrow, fontSize: 10 }}>Your user ID</div><code style={{ display: 'block', marginTop: 8, color: '#0f172a', overflowWrap: 'anywhere' }}>{user.id}</code><button type="button" onClick={() => { void navigator.clipboard?.writeText(user.id); setMessage('User ID copied.'); }} style={{ ...secondary, marginTop: 12, padding: '8px 10px' }}>Copy ID</button></div>
@@ -254,6 +257,7 @@ export default function AccountPage() {
               <label style={label}>Username<input value={profile.username} onChange={(event) => setProfile({ ...profile, username: event.target.value })} placeholder="your-handle" style={input} /></label>
               <label style={label}>Location<input value={profile.location} onChange={(event) => setProfile({ ...profile, location: event.target.value })} placeholder="Pune, India" style={input} /></label>
               <label style={label}>Website<input value={profile.website} onChange={(event) => setProfile({ ...profile, website: event.target.value })} placeholder="https://…" style={input} /></label>
+              <label style={label}>Profile photo URL<input type="url" value={profile.avatar_url} onChange={(event) => setProfile({ ...profile, avatar_url: event.target.value })} placeholder="https://…" style={input} /></label>
             </div>
             <label style={{ ...label, marginTop: 14 }}>Bio<textarea rows={4} value={profile.bio} onChange={(event) => setProfile({ ...profile, bio: event.target.value })} placeholder="Tell the marketplace about your work" style={{ ...input, resize: 'vertical' }} /></label>
             <h2 style={{ margin: '28px 0 14px' }}>Settings</h2>
