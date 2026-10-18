@@ -13,6 +13,7 @@ export default async function MarketplacePage() {
         </div>
         <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
           <a href="/studio" style={{ color: '#0f766e', fontWeight: 800 }}>Create a skill →</a>
+          <a href="/account" style={{ color: '#111827', fontWeight: 700 }}>Account →</a>
           <a href="/pricing" style={{ color: '#111827', fontWeight: 700 }}>First month free →</a>
         </div>
       </div>

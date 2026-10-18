@@ -12,9 +12,10 @@ export default async function HomePage() {
             <div style={{ fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b7280' }}>AI Marketplace</div>
             <h1 style={{ margin: '8px 0 0', fontSize: 'clamp(2.2rem, 5vw, 4rem)' }}>Sell reusable AI skills, prompts, and plugin packs.</h1>
           </div>
-          <a href="/studio" style={{ background: '#111827', color: 'white', borderRadius: 999, padding: '12px 18px', fontWeight: 700, textDecoration: 'none' }}>
-            Create a skill
-          </a>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <a href="/account" style={{ color: '#111827', fontWeight: 700, textDecoration: 'none' }}>Account</a>
+            <a href="/studio" style={{ background: '#111827', color: 'white', borderRadius: 999, padding: '12px 18px', fontWeight: 700, textDecoration: 'none' }}>Create a skill</a>
+          </div>
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 18, marginBottom: 40 }}>
