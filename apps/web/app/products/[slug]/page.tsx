@@ -10,7 +10,9 @@ export default async function ProductPage({ params }) {
     notFound();
   }
 
-  const isSkillPack = params.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length);
+  const isSkillPack = params.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length) || Boolean(product.metadata?.source_url);
+  const sourceUrl = typeof product.metadata?.source_url === 'string' ? product.metadata.source_url : undefined;
+  const sourceLabel = typeof product.metadata?.source_label === 'string' ? product.metadata.source_label : 'Public reference';
 
   return (
     <main style={{ maxWidth: 980, margin: '0 auto', padding: 32 }}>
@@ -35,10 +37,12 @@ export default async function ProductPage({ params }) {
           </div>
         )}
 
+        {sourceUrl && <p style={{ marginTop: 18, color: '#64748b', fontSize: 14 }}>Built as a guided reference from <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: '#0f766e', fontWeight: 700 }}>{sourceLabel} ↗</a>. Review the source terms before reusing or redistributing material.</p>}
+
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
           <div>
             <div style={{ color: '#6b7280', fontSize: 14 }}>Starting at</div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 800 }}>{formatPrice(product.price)}</div>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800 }}>{product.price === 0 ? 'Free' : formatPrice(product.price)}</div>
           </div>
           {isSkillPack ? (
             <a href={`/skills/${product.slug}`} style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>

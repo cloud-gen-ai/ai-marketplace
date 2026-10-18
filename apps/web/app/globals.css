@@ -568,9 +568,44 @@ select {
   line-height: 1.65;
 }
 
+.catalog-stat {
+  display: inline-flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 22px;
+  padding: 11px 14px;
+  border: 1px solid #99f6e4;
+  border-radius: 14px;
+  background: rgba(236, 253, 245, .72);
+  color: #0f766e;
+}
+
+.catalog-stat strong {
+  color: #0f172a;
+  font-size: 21px;
+}
+
+.catalog-stat span {
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .course-card,
 .insight-card {
   padding: 24px;
+}
+
+.course-card {
+  display: block;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.course-card:hover,
+.product-card:hover,
+.testimonial-card:hover {
+  transform: translateY(-4px) rotateX(1deg);
+  border-color: #99f6e4;
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.1);
 }
 
 .course-card {
@@ -599,6 +634,117 @@ select {
 
 .content-card {
   padding: 26px;
+}
+
+.course-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+  gap: 20px;
+}
+
+.syllabus-list {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.syllabus-list li {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 15px;
+  background: #f8fafc;
+}
+
+.syllabus-list li > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border-radius: 10px;
+  background: #ccfbf1;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.syllabus-list strong {
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+.syllabus-list p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.course-summary {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 15px;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.course-summary strong {
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.career-panel {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 30px;
+  padding: 34px;
+  border-radius: 26px;
+  background: linear-gradient(120deg, #0f172a 0%, #172554 65%, #134e4a 100%);
+  color: white;
+  box-shadow: 0 22px 50px rgba(15, 23, 42, .14);
+}
+
+.career-panel h2 {
+  max-width: 500px;
+  margin: 10px 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+}
+
+.career-panel p {
+  max-width: 520px;
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.65;
+}
+
+.career-panel ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.career-panel li {
+  display: flex;
+  gap: 10px;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.career-panel li::before {
+  content: '✓';
+  color: #99f6e4;
+  font-weight: 900;
 }
 
 .content-card h2,
@@ -895,7 +1041,9 @@ select {
   .path-grid,
   .testimonial-grid,
   .feedback-layout,
-  .feedback-fields {
+  .feedback-fields,
+  .course-detail-grid,
+  .career-panel {
     grid-template-columns: 1fr;
   }
 

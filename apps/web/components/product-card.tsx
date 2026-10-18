@@ -3,7 +3,7 @@ import { formatPrice } from '@ai-marketplace/shared';
 import type { MarketplaceProduct } from '../lib/marketplace';
 
 export function ProductCard({ product }: { product: MarketplaceProduct }) {
-  const isSkillPack = product.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length);
+  const isSkillPack = product.slug.startsWith('skill-pack-') || Boolean(product.metadata?.skills?.length) || Boolean(product.metadata?.source_url);
   return (
     <article className="product-card">
       <div className="card-meta"><span className="tag" style={{ background: '#ccfbf1', color: '#0f766e' }}>{product.category}</span><span>{product.rating} ★</span></div>

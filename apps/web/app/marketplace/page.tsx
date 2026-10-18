@@ -3,6 +3,7 @@ import { getMarketplaceProducts } from '../../lib/marketplace';
 import { MarketplaceBrowser } from '../../components/marketplace-browser';
 import { SiteFooter } from '../../components/site-footer';
 import { SiteNav } from '../../components/site-nav';
+import { expandedSkillCount } from '../../lib/skills-catalog';
 
 export default async function MarketplacePage() {
   const productCatalog = await getMarketplaceProducts({ fresh: true });
@@ -14,6 +15,7 @@ export default async function MarketplacePage() {
         <div className="eyebrow">The skill library</div>
         <h1>Find the next reusable piece of your AI workflow.</h1>
         <p>Browse skill packs, project playbooks, and practical assets for coding agents, RAG, agentic systems, security, and operations. Read first, then decide what fits.</p>
+        <div className="catalog-stat"><strong>{expandedSkillCount.toLocaleString()}+</strong><span>free open-reference skill recipes across 17 AI domains</span></div>
         <div className="hero-actions"><Link href="/courses" className="button-primary">Explore learning paths →</Link><Link href="/mentoring" className="button-secondary">Need a recommendation?</Link></div>
       </section>
       <section className="site-container section-tight"><MarketplaceBrowser products={productCatalog} /></section>

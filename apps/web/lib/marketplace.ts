@@ -1,4 +1,5 @@
 import { productCatalog } from '@ai-marketplace/shared';
+import { expandedSkillCatalog } from './skills-catalog';
 
 export type SkillSession = { title: string; content: string };
 export type MarketplaceMetadata = {
@@ -24,7 +25,7 @@ type SupabaseProduct = {
 };
 
 function fallbackProducts(): MarketplaceProduct[] {
-  return productCatalog;
+  return [...productCatalog, ...expandedSkillCatalog];
 }
 
 export async function getMarketplaceProducts(options: { fresh?: boolean } = {}): Promise<MarketplaceProduct[]> {
@@ -46,7 +47,7 @@ export async function getMarketplaceProducts(options: { fresh?: boolean } = {}):
     const rows = (await response.json()) as SupabaseProduct[];
     if (!rows.length) return fallbackProducts();
 
-    return rows.map((product) => ({
+    const databaseProducts = rows.map((product) => ({
       id: `supabase_${product.id}`,
       slug: product.slug,
       title: product.title,
@@ -61,6 +62,8 @@ export async function getMarketplaceProducts(options: { fresh?: boolean } = {}):
       compatibleWith: ['Claude Code', 'OpenAI', 'Cursor'],
       metadata: product.metadata || undefined,
     }));
+    const existingSlugs = new Set(databaseProducts.map((product) => product.slug));
+    return [...databaseProducts, ...expandedSkillCatalog.filter((product) => !existingSlugs.has(product.slug))];
   } catch {
     return fallbackProducts();
   }

@@ -37,6 +37,8 @@ export default async function SkillReaderPage({ params, searchParams }) {
   const guide = selectedSession ? [selectedSession.content] : guideForSkill(selectedSkill, pack.title);
   const downloadHref = staticPack ? `/downloads/skill-packs/${pack.slug}.zip` : `/api/skills/${pack.slug}/download`;
   const downloadLabel = staticPack ? 'Download this pack' : 'Download reader guide';
+  const sourceUrl = typeof product.metadata?.source_url === 'string' ? product.metadata.source_url : undefined;
+  const sourceLabel = typeof product.metadata?.source_label === 'string' ? product.metadata.source_label : 'Public reference';
 
   return (
     <main style={{ minHeight: '100vh', background: '#f8fafc', padding: '28px 20px 64px' }}>
@@ -50,8 +52,9 @@ export default async function SkillReaderPage({ params, searchParams }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 24 }}>
             <span style={{ background: '#1e293b', borderRadius: 999, padding: '8px 12px', color: '#e2e8f0' }}>{pack.skills.length} included skills</span>
             <span style={{ background: '#1e293b', borderRadius: 999, padding: '8px 12px', color: '#e2e8f0' }}>Python package</span>
-            <span style={{ background: '#1e293b', borderRadius: 999, padding: '8px 12px', color: '#e2e8f0' }}>{formatPrice(product.price)}</span>
+            <span style={{ background: '#1e293b', borderRadius: 999, padding: '8px 12px', color: '#e2e8f0' }}>{product.price === 0 ? 'Free' : formatPrice(product.price)}</span>
           </div>
+          {sourceUrl && <p style={{ margin: '18px 0 0', color: '#94a3b8', lineHeight: 1.6 }}>Reference: <a href={sourceUrl} target="_blank" rel="noreferrer" style={{ color: '#99f6e4' }}>{sourceLabel} ↗</a></p>}
         </section>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 20, marginTop: 22 }}>
