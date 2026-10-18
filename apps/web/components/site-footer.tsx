@@ -25,7 +25,7 @@ export function SiteFooter() {
           <div>
             <h3>Build with confidence</h3>
             <p>Reusable workflows for coding agents, RAG, agentic systems, and AI operations.</p>
-            <Link href="mailto:shyam.waghmarenok@gmail.com">Contact the team →</Link>
+            <Link href="/account">Create a profile to connect →</Link>
           </div>
         </div>
         <div className="footer-bottom"><span>© 2026 AI Marketplace</span><span>Learn openly. Build responsibly. Ship deliberately.</span></div>
