@@ -8,17 +8,18 @@ export function SiteNav() {
         <span>AI Marketplace</span>
       </Link>
       <nav className="site-nav-links" aria-label="Primary navigation">
-        <Link href="/marketplace">Marketplace</Link>
-        <Link href="/mentoring">Guidance</Link>
+        <Link href="/marketplace" className="site-nav-priority">Marketplace</Link>
+        <Link href="/mcp-servers" className="site-nav-priority">MCP servers</Link>
+        <Link href="/services" className="site-nav-priority">Services</Link>
+        <span className="site-nav-divider" aria-hidden="true" />
         <Link href="/courses">Courses</Link>
-        <Link href="/services">Services</Link>
-        <Link href="/mcp-servers">MCP servers</Link>
+        <Link href="/mentoring">Guidance</Link>
         <Link href="/insights">Insights</Link>
       </nav>
-      <div className="inline-actions">
-        <Link href="/connect" className="text-link" style={{ fontSize: 14, fontWeight: 800 }}>Contact</Link>
-        <Link href="/account" className="text-link" style={{ fontSize: 14, fontWeight: 800 }}>Sign in</Link>
-        <Link href="/studio" className="button-primary" style={{ minHeight: 40, padding: '0 14px' }}>Publish a skill</Link>
+      <div className="site-nav-actions">
+        <Link href="/connect" className="site-nav-contact">Contact</Link>
+        <Link href="/account" className="site-nav-signin">Sign in</Link>
+        <Link href="/studio" className="button-primary site-nav-publish">Publish a skill</Link>
       </div>
     </header>
   );

@@ -39,9 +39,9 @@ select {
 }
 
 .site-nav {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 24px;
   padding: 22px 0;
 }
@@ -71,15 +71,57 @@ select {
 .site-nav-links {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 22px;
+  min-width: 0;
   color: #475569;
   font-size: 14px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .site-nav-links a,
 .text-link {
   text-decoration: none;
+}
+
+.site-nav-priority {
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.site-nav-divider {
+  width: 1px;
+  height: 20px;
+  background: #cbd5e1;
+}
+
+.site-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.site-nav-contact,
+.site-nav-signin {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.site-nav-contact:hover,
+.site-nav-signin:hover {
+  color: #0f766e;
+}
+
+.site-nav-publish {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 13px;
 }
 
 .site-nav-links a:hover,
@@ -1248,6 +1290,32 @@ select {
 .form-success { background: #ecfdf5; color: #065f46; }
 
 @media (max-width: 900px) {
+  .site-nav {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 14px 18px;
+  }
+
+  .site-nav-actions {
+    justify-self: end;
+  }
+
+  .site-nav-links {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    gap: 18px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 2px 0 4px;
+    font-size: 13px;
+    scrollbar-width: none;
+  }
+
+  .site-nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
   .hero-section {
     grid-template-columns: 1fr;
     gap: 35px;
@@ -1293,18 +1361,47 @@ select {
   }
 
   .site-nav {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    gap: 12px 10px;
+    padding: 15px 0 13px;
+  }
+
+  .brand-mark {
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .brand-icon {
+    width: 31px;
+    height: 31px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .site-nav-actions {
+    gap: 9px;
+  }
+
+  .site-nav-contact {
+    display: none;
+  }
+
+  .site-nav-signin {
+    font-size: 12px;
+  }
+
+  .site-nav-publish {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 11px;
   }
 
   .site-nav-links {
-    order: 3;
-    width: 100%;
-    justify-content: space-between;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 2px;
+    gap: 15px;
     font-size: 12px;
+  }
+
+  .site-nav-divider {
+    height: 16px;
   }
 
   .hero-title {
