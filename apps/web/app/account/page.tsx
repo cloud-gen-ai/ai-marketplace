@@ -64,7 +64,7 @@ export default function AccountPage() {
     setSaving(true);
     try {
       if (mode === 'signup') {
-        const result = await signUp(email.trim(), password, { display_name: name.trim(), username: name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') });
+        const result = await signUp(email.trim(), password, { display_name: name.trim(), username: name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') }, `${window.location.origin}/account`);
         if (result.access_token && result.user) {
           setUser(result.user);
           setProfile(profileFromUser(result.user));

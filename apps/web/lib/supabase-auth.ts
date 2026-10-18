@@ -85,9 +85,10 @@ export async function signIn(email: string, password: string): Promise<Marketpla
   return session.user;
 }
 
-export async function signUp(email: string, password: string, profile: Record<string, unknown>) {
+export async function signUp(email: string, password: string, profile: Record<string, unknown>, redirectTo?: string) {
   const { url, key } = config();
-  const response = await fetch(`${url}/auth/v1/signup`, {
+  const redirectQuery = redirectTo ? `?redirect_to=${encodeURIComponent(redirectTo)}` : '';
+  const response = await fetch(`${url}/auth/v1/signup${redirectQuery}`, {
     method: 'POST',
     headers: { apikey: key, 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, data: profile }),
@@ -100,10 +101,10 @@ export async function signUp(email: string, password: string, profile: Record<st
 
 export async function requestPasswordReset(email: string, redirectTo: string) {
   const { url, key } = config();
-  const response = await fetch(`${url}/auth/v1/recover`, {
+  const response = await fetch(`${url}/auth/v1/recover?redirect_to=${encodeURIComponent(redirectTo)}`, {
     method: 'POST',
     headers: { apikey: key, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, redirect_to: redirectTo }),
+    body: JSON.stringify({ email }),
   });
   if (!response.ok) throw new Error(await parseError(response));
 }
