@@ -37,6 +37,17 @@ function saveSession(session: Session | null) {
   else window.localStorage.removeItem(SESSION_KEY);
 }
 
+export function adoptRecoverySessionFromUrl(): boolean {
+  if (typeof window === 'undefined') return false;
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  if (params.get('type') !== 'recovery' || !params.get('access_token')) return false;
+  saveSession({
+    access_token: params.get('access_token') as string,
+    refresh_token: params.get('refresh_token') || undefined,
+  });
+  return true;
+}
+
 async function parseError(response: Response): Promise<string> {
   try {
     const body = await response.json() as { msg?: string; message?: string; error_description?: string };
@@ -87,6 +98,16 @@ export async function signUp(email: string, password: string, profile: Record<st
   return result;
 }
 
+export async function requestPasswordReset(email: string, redirectTo: string) {
+  const { url, key } = config();
+  const response = await fetch(`${url}/auth/v1/recover`, {
+    method: 'POST',
+    headers: { apikey: key, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, redirect_to: redirectTo }),
+  });
+  if (!response.ok) throw new Error(await parseError(response));
+}
+
 export async function getCurrentUser(): Promise<MarketplaceUser | null> {
   let session = readSession();
   if (!session?.access_token) return null;
@@ -118,6 +139,21 @@ export async function updateProfile(profile: Record<string, unknown>): Promise<M
     method: 'PUT',
     headers: { apikey: key, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ data: profile }),
+  });
+  if (!response.ok) throw new Error(await parseError(response));
+  const user = await response.json() as MarketplaceUser;
+  saveSession({ ...session, user });
+  return user;
+}
+
+export async function updatePassword(password: string): Promise<MarketplaceUser> {
+  const session = readSession();
+  if (!session?.access_token) throw new Error('Open the password reset link from your email before choosing a new password.');
+  const { url, key } = config();
+  const response = await fetch(`${url}/auth/v1/user`, {
+    method: 'PUT',
+    headers: { apikey: key, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
   });
   if (!response.ok) throw new Error(await parseError(response));
   const user = await response.json() as MarketplaceUser;

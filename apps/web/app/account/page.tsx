@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, type FormEvent } from 'react';
-import { getCurrentUser, signIn, signOut, signUp, updateProfile, type MarketplaceUser } from '../../lib/supabase-auth';
+import { adoptRecoverySessionFromUrl, getCurrentUser, requestPasswordReset, signIn, signOut, signUp, updatePassword, updateProfile, type MarketplaceUser } from '../../lib/supabase-auth';
 
 type ProfileForm = {
   display_name: string;
@@ -37,9 +37,12 @@ function profileFromUser(user: MarketplaceUser): ProfileForm {
 export default function AccountPage() {
   const [user, setUser] = useState<MarketplaceUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot' | 'reset'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [forgotEmail, setForgotEmail] = useState('');
   const [name, setName] = useState('');
   const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
   const [message, setMessage] = useState('');
@@ -47,6 +50,7 @@ export default function AccountPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (adoptRecoverySessionFromUrl()) setMode('reset');
     getCurrentUser().then((currentUser) => {
       setUser(currentUser);
       if (currentUser) setProfile(profileFromUser(currentUser));
@@ -109,7 +113,84 @@ export default function AccountPage() {
     }
   }
 
+  async function sendResetLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaving(true);
+    setError('');
+    setMessage('');
+    try {
+      await requestPasswordReset(forgotEmail.trim(), `${window.location.origin}/account?mode=reset`);
+      setMessage('If an account exists for that email, a password reset link has been sent. Check your inbox and spam folder.');
+    } catch (reason: unknown) {
+      setError(reason instanceof Error ? reason.message : 'Could not send the reset email.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function resetPassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (newPassword.length < 6) { setError('Use at least 6 characters for the new password.'); return; }
+    if (newPassword !== confirmPassword) { setError('The passwords do not match.'); return; }
+    setSaving(true);
+    setError('');
+    setMessage('');
+    try {
+      await updatePassword(newPassword);
+      await signOut();
+      window.history.replaceState({}, '', '/account');
+      setMode('signin');
+      setNewPassword('');
+      setConfirmPassword('');
+      setUser(null);
+      setMessage('Password updated successfully. Sign in with your new password.');
+    } catch (reason: unknown) {
+      setError(reason instanceof Error ? reason.message : 'Could not update your password.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   if (loading) return <main style={shell}><div style={card}><p>Loading your account…</p></div></main>;
+
+  if (mode === 'reset') return (
+    <main style={shell}>
+      <div style={{ maxWidth: 520, margin: '0 auto' }}>
+        <a href="/marketplace" style={backLink}>← Back to marketplace</a>
+        <section style={{ ...card, marginTop: 20 }}>
+          <div style={eyebrow}>Password recovery</div>
+          <h1 style={{ margin: '10px 0 8px' }}>Choose a new password</h1>
+          <p style={muted}>Use a strong password you do not reuse on another service.</p>
+          <form onSubmit={resetPassword} style={{ display: 'grid', gap: 14, marginTop: 22 }}>
+            <label style={label}>New password<input required minLength={6} type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="At least 6 characters" style={input} /></label>
+            <label style={label}>Confirm new password<input required minLength={6} type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Repeat your new password" style={input} /></label>
+            {error && <div style={errorBox}>{error}</div>}
+            <button disabled={saving} style={primary}>{saving ? 'Updating…' : 'Update password'}</button>
+          </form>
+        </section>
+      </div>
+    </main>
+  );
+
+  if (mode === 'forgot') return (
+    <main style={shell}>
+      <div style={{ maxWidth: 520, margin: '0 auto' }}>
+        <a href="/marketplace" style={backLink}>← Back to marketplace</a>
+        <section style={{ ...card, marginTop: 20 }}>
+          <div style={eyebrow}>Password recovery</div>
+          <h1 style={{ margin: '10px 0 8px' }}>Forgot your password?</h1>
+          <p style={muted}>Enter the email registered to your marketplace account. We’ll send a secure reset link.</p>
+          <form onSubmit={sendResetLink} style={{ display: 'grid', gap: 14, marginTop: 22 }}>
+            <label style={label}>Registered email<input required type="email" value={forgotEmail} onChange={(event) => setForgotEmail(event.target.value)} placeholder="you@example.com" style={input} /></label>
+            {error && <div style={errorBox}>{error}</div>}
+            {message && <div style={successBox}>{message}</div>}
+            <button disabled={saving} style={primary}>{saving ? 'Sending…' : 'Send reset link'}</button>
+          </form>
+          <button type="button" onClick={() => { setMode('signin'); setError(''); setMessage(''); }} style={switchButton}>Back to sign in</button>
+        </section>
+      </div>
+    </main>
+  );
 
   if (!user) return (
     <main style={shell}>
@@ -127,6 +208,7 @@ export default function AccountPage() {
             {message && <div style={successBox}>{message}</div>}
             <button disabled={saving} style={primary}>{saving ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account'}</button>
           </form>
+          {mode === 'signin' && <button type="button" onClick={() => { setMode('forgot'); setForgotEmail(email); setError(''); setMessage(''); }} style={switchButton}>Forgot password?</button>}
           <button type="button" onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); setMessage(''); }} style={switchButton}>{mode === 'signin' ? 'New here? Create an account' : 'Already have an account? Sign in'}</button>
         </section>
       </div>
