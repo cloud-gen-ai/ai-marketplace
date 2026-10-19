@@ -64,7 +64,7 @@ export default function ConnectPage() {
         resourceSlug: form.service_type,
         metadata: { organization: form.organization || null },
       });
-      setMessage('Request received. We will reply from nextgenai.soulation@gmail.com and confirm the Google Meet details.');
+      setMessage('Request received and added to your activity. We will reply from nextgenai.soulation@gmail.com with the confirmed Google Meet invite.');
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Could not submit your request.');
     } finally { setSaving(false); }
@@ -94,11 +94,12 @@ export default function ConnectPage() {
           <div className="content-card service-request-card">
             <div className="eyebrow">Free demo and booking request</div>
             <h2>{user ? 'Choose a time to connect' : 'Sign in to request a session'}</h2>
-            <p className="service-request-note">Your request is private. We’ll confirm the exact Google Meet invite by email.</p>
+            <p className="service-request-note">Your request is private and linked to your profile. We’ll confirm the exact Google Meet invite by email.</p>
             {loading ? <p>Checking your account…</p> : !user ? <div className="auth-gate"><p>Sign in to submit a request and track your profile-linked conversation. You can still email us directly without an account.</p><div className="inline-actions"><Link href="/account?next=%2Fconnect" className="button-primary">Sign in or create account</Link><a href="mailto:nextgenai.soulation@gmail.com" className="button-secondary">Email directly</a></div></div> : <form onSubmit={submit} className="service-request-form">
               <div className="feedback-fields"><label>Name<input required minLength={2} maxLength={100} value={form.requester_name} onChange={(event) => setForm({ ...form, requester_name: event.target.value })} /></label><label>Email<input required type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} /></label><label>Organization <span className="field-hint">optional</span><input value={form.organization} onChange={(event) => setForm({ ...form, organization: event.target.value })} placeholder="Company or individual" /></label><label>Service<select value={form.service_type} onChange={(event) => setForm({ ...form, service_type: event.target.value })}>{services.map(([value, title]) => <option key={value} value={value}>{title}</option>)}</select></label><label>Preferred date <span className="field-hint">optional</span><input type="date" value={form.preferred_date} onChange={(event) => setForm({ ...form, preferred_date: event.target.value })} /></label><label>Preferred time <span className="field-hint">optional</span><input type="time" value={form.preferred_time} onChange={(event) => setForm({ ...form, preferred_time: event.target.value })} /></label><label className="feedback-full">Timezone<select value={form.timezone} onChange={(event) => setForm({ ...form, timezone: event.target.value })}><option>Asia/Kolkata</option><option>Asia/Singapore</option><option>Europe/London</option><option>Europe/Berlin</option><option>America/New_York</option><option>UTC</option></select></label><label className="feedback-full">What would you like to discuss?<textarea required minLength={10} maxLength={2000} rows={5} value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} /></label></div>
               {error && <div className="form-error">{error}</div>}{message && <div className="form-success">{message}</div>}
-              <div className="inline-actions"><button type="submit" className="button-primary" disabled={saving}>{saving ? 'Sending request…' : 'Request free demo'}</button><a href={mailto} className="button-secondary">Open email draft</a><a href={calendarUrl} className="text-link" target="_blank" rel="noreferrer">Add a calendar hold ↗</a></div>
+              <div className="inline-actions"><button type="submit" className="button-primary" disabled={saving}>{saving ? 'Sending request…' : 'Request free demo'}</button><a href={mailto} className="button-secondary">Open email draft</a><a href={calendarUrl} className="text-link" target="_blank" rel="noreferrer">Add a pre-addressed calendar hold ↗</a></div>
+              <p className="service-request-note" style={{ marginBottom: 0 }}>The calendar button opens a draft addressed to the NextGen AI team. The team’s final Meet link is sent after they confirm the time.</p>
             </form>}
             <p className="contact-email">Contact: <a href="mailto:nextgenai.soulation@gmail.com">nextgenai.soulation@gmail.com</a></p>
           </div>

@@ -22,6 +22,16 @@ const emptyProfile: ProfileForm = {
   email_updates: true, public_profile: true, compact_mode: false,
 };
 
+const accountDestinations = [
+  { href: '/marketplace', label: 'Marketplace', description: 'Browse reusable skills and download packs.' },
+  { href: '/courses', label: 'AI courses', description: 'Activate a guided learning path and track it here.' },
+  { href: '/mentoring', label: 'Guidance', description: 'Find one-to-one mentoring and interview support.' },
+  { href: '/services', label: 'Services', description: 'Explore team training and corporate AI support.' },
+  { href: '/mcp-servers', label: 'MCP servers', description: 'Review open-source tool connections for agents.' },
+  { href: '/insights', label: 'Insights', description: 'Read practical notes for building with AI.' },
+  { href: '/connect', label: 'Book a demo', description: 'Request a private session and track the request.' },
+] as const;
+
 function profileFromUser(user: MarketplaceUser): ProfileForm {
   const data = user.user_metadata || {};
   const settings = (data.settings || {}) as Record<string, unknown>;
@@ -300,6 +310,15 @@ export default function AccountPage() {
             <button type="submit" disabled={saving} style={{ ...primary, marginTop: 20 }}>{saving ? 'Saving…' : 'Save profile & settings'}</button>
           </form>
         </div>
+        <section style={{ ...card, marginTop: 20 }}>
+          <div style={eyebrow}>Your signed-in workspace</div>
+          <h2 style={{ margin: '8px 0 6px' }}>Everything in one place</h2>
+          <p style={{ ...muted, marginTop: 0 }}>Your sign-in does not remove any marketplace access. Use these shortcuts to explore the same catalog, learning, services, and support from your profile.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(210px,1fr))', gap: 10, marginTop: 18 }}>
+            {accountDestinations.map((destination) => <a key={destination.href} href={destination.href} style={{ display: 'block', padding: 15, borderRadius: 16, border: '1px solid #e2e8f0', background: '#f8fafc', textDecoration: 'none', color: '#0f172a' }}><strong style={{ display: 'block' }}>{destination.label} <span aria-hidden="true">→</span></strong><span style={{ display: 'block', marginTop: 5, color: '#64748b', fontSize: 13, lineHeight: 1.45 }}>{destination.description}</span></a>)}
+          </div>
+          <div style={{ marginTop: 16, padding: 14, borderRadius: 14, background: '#f0fdfa', color: '#115e59', lineHeight: 1.5, fontSize: 14 }}><strong>Private activity trail:</strong> actions you take while signed in are attached to your user ID and appear below. Only your account can read this history.</div>
+        </section>
         <ActivityTimeline userId={user.id} />
       </div>
     </main>
