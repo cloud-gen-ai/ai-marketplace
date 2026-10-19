@@ -1,14 +1,30 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { getCurrentUser } from '../lib/supabase-auth';
+import { trackActivity } from '../lib/activity';
 
-export function ProtectedDownloadButton({ href, label, returnPath }: { href: string; label: string; returnPath: string }) {
+export function ProtectedDownloadButton({ href, label, returnPath, resourceSlug, title }: { href: string; label: string; returnPath: string; resourceSlug?: string; title?: string }) {
   const [checking, setChecking] = useState(false);
   const [needsLogin, setNeedsLogin] = useState(false);
   const [downloadReady, setDownloadReady] = useState(false);
   const [message, setMessage] = useState('');
+  const downloadLogged = useRef(false);
+
+  async function logDownload(userId: string, filename: string) {
+    if (downloadLogged.current) return;
+    downloadLogged.current = true;
+    await trackActivity({
+      userId,
+      eventType: 'skill_download',
+      title: `Downloaded: ${title || label}`,
+      description: `Downloaded ${filename} from the skill reader.`,
+      resourceType: 'skill',
+      resourceSlug: resourceSlug || href.split('/').pop() || 'download',
+      metadata: { filename },
+    });
+  }
 
   async function startDownload() {
     setChecking(true);
@@ -50,6 +66,7 @@ export function ProtectedDownloadButton({ href, label, returnPath }: { href: str
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30_000);
+      await logDownload(user.id, filename);
       setDownloadReady(true);
       setMessage('Your download is ready. If it did not appear, tap the download link below.');
     } catch (reason: unknown) {
@@ -69,7 +86,7 @@ export function ProtectedDownloadButton({ href, label, returnPath }: { href: str
         Sign in or create a free account to download this skill pack. <Link href={`/account?next=${encodeURIComponent(returnPath)}`} style={{ color: '#0f766e', fontWeight: 900 }}>Continue to sign in →</Link>
       </div>}
       {message && <div role="status" style={{ color: '#0f766e', fontSize: 13, fontWeight: 800 }}>{message}</div>}
-      {downloadReady && <a href={href} download style={{ display: 'inline-flex', justifyContent: 'center', padding: '12px 14px', border: '1px solid #cbd5e1', borderRadius: 12, color: '#0f172a', background: '#fff', fontWeight: 800, textDecoration: 'none' }}>
+      {downloadReady && <a href={href} download onClick={() => { void getCurrentUser().then((currentUser) => { if (currentUser) return logDownload(currentUser.id, href.split('/').pop() || 'download'); }); }} style={{ display: 'inline-flex', justifyContent: 'center', padding: '12px 14px', border: '1px solid #cbd5e1', borderRadius: 12, color: '#0f172a', background: '#fff', fontWeight: 800, textDecoration: 'none' }}>
         Tap here to download the file
       </a>}
     </div>

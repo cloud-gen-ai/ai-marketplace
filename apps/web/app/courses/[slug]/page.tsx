@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { careerSupport, courseCatalog } from '../../../lib/experience';
 import { SiteFooter } from '../../../components/site-footer';
 import { SiteNav } from '../../../components/site-nav';
+import { ActivityTracker } from '../../../components/activity-tracker';
+import { CourseActivationButton } from '../../../components/course-activation-button';
 
 export default function CourseDetailPage({ params }: { params: { slug: string } }) {
   const course = courseCatalog.find((entry) => entry.slug === params.slug);
@@ -10,13 +12,14 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
 
   return (
     <main className="site-shell">
+      <ActivityTracker eventType="course_view" title={`Viewed course: ${course.title}`} description={`Opened the syllabus for ${course.title}.`} resourceType="course" resourceSlug={course.slug} />
       <SiteNav />
       <section className="site-container page-hero">
         <Link href="/courses" className="text-link" style={{ color: '#0f766e', fontWeight: 900 }}>← All courses</Link>
         <div className="eyebrow" style={{ marginTop: 26 }}>{course.type} · {course.duration}</div>
         <h1>{course.title}</h1>
         <p>{course.description}</p>
-        <div className="hero-actions"><Link href="/account" className="button-primary">Create a learning profile →</Link><Link href="/mentoring" className="button-secondary">Add one-to-one guidance</Link></div>
+        <div className="hero-actions"><CourseActivationButton slug={course.slug} title={course.title} /><Link href="/account" className="button-secondary">Manage my profile</Link><Link href="/mentoring" className="button-secondary">Add one-to-one guidance</Link></div>
       </section>
 
       <section className="site-container section-tight course-detail-grid">

@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { formatPrice } from '@ai-marketplace/shared';
 import { getMarketplaceProducts } from '../../../lib/marketplace';
+import { ActivityTracker } from '../../../components/activity-tracker';
+import { SkillPurchaseButton } from '../../../components/skill-purchase-button';
 
 export default async function ProductPage({ params }) {
   const productCatalog = await getMarketplaceProducts({ fresh: true });
@@ -16,6 +18,7 @@ export default async function ProductPage({ params }) {
 
   return (
     <main style={{ maxWidth: 980, margin: '0 auto', padding: 32 }}>
+      {isSkillPack && <ActivityTracker eventType="skill_view" title={`Viewed skill: ${product.title}`} description={`Opened the details for ${product.title}.`} resourceType="skill" resourceSlug={product.slug} />}
       <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e5e7eb', padding: 32 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
           <span style={{ background: '#eef2ff', color: '#3730a3', padding: '8px 12px', borderRadius: 999, fontWeight: 700 }}>{product.category}</span>
@@ -45,9 +48,10 @@ export default async function ProductPage({ params }) {
             <div style={{ fontSize: '2.2rem', fontWeight: 800 }}>{product.price === 0 ? 'Free' : formatPrice(product.price)}</div>
           </div>
           {isSkillPack ? (
-            <a href={`/skills/${product.slug}`} style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
-              Access & read skills
-            </a>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
+              <SkillPurchaseButton slug={product.slug} title={product.title} isFree={product.price === 0} />
+              <a href={`/skills/${product.slug}`} style={{ color: '#0f766e', fontWeight: 800, fontSize: 13 }}>Access & read skills →</a>
+            </div>
           ) : (
             <a href="/pricing" style={{ padding: '14px 22px', borderRadius: 14, background: '#111827', color: 'white', textDecoration: 'none', fontWeight: 700 }}>
               Start free trial

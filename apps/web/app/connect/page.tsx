@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { createServiceRequest, buildContactMailto, buildDemoCalendarUrl } from '../../lib/service-requests';
 import { getCurrentUser, type MarketplaceUser } from '../../lib/supabase-auth';
+import { trackActivity } from '../../lib/activity';
 import { SiteFooter } from '../../components/site-footer';
 import { SiteNav } from '../../components/site-nav';
 
@@ -54,6 +55,15 @@ export default function ConnectPage() {
     setSaving(true); setError(''); setMessage('');
     try {
       await createServiceRequest({ ...form, user_id: user.id });
+      await trackActivity({
+        userId: user.id,
+        eventType: 'service_request',
+        title: `Requested: ${selectedService}`,
+        description: 'Submitted a private guidance or demo request.',
+        resourceType: 'service',
+        resourceSlug: form.service_type,
+        metadata: { organization: form.organization || null },
+      });
       setMessage('Request received. We will reply from nextgenai.soulation@gmail.com and confirm the Google Meet details.');
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Could not submit your request.');

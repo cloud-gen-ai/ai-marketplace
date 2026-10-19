@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 import { adoptRecoverySessionFromUrl, getCurrentUser, requestPasswordReset, signIn, signOut, signUp, updatePassword, updateProfile, type MarketplaceUser } from '../../lib/supabase-auth';
+import { trackActivity } from '../../lib/activity';
+import { ActivityTimeline } from '../../components/activity-timeline';
 
 type ProfileForm = {
   display_name: string;
@@ -81,6 +83,14 @@ export default function AccountPage() {
           authenticated = true;
           setUser(result.user);
           setProfile(profileFromUser(result.user));
+          await trackActivity({
+            userId: result.user.id,
+            eventType: 'account_created',
+            title: 'Created marketplace account',
+            description: 'Created a profile for courses, skills, and guidance.',
+            resourceType: 'account',
+            resourceSlug: 'account',
+          });
           setMessage('Account created. Your profile is ready to customize.');
         } else {
           setMessage('Account created. Check your email to confirm it, then sign in.');
@@ -91,6 +101,14 @@ export default function AccountPage() {
         authenticated = true;
         setUser(currentUser);
         setProfile(profileFromUser(currentUser));
+        await trackActivity({
+          userId: currentUser.id,
+          eventType: 'login',
+          title: 'Signed in to AI Marketplace',
+          description: 'Your account session was started.',
+          resourceType: 'account',
+          resourceSlug: 'account',
+        });
         setMessage('Welcome back.');
       }
       const nextPath = new URLSearchParams(window.location.search).get('next');
@@ -122,6 +140,14 @@ export default function AccountPage() {
         },
       });
       setUser(updated);
+      await trackActivity({
+        userId: updated.id,
+        eventType: 'profile_update',
+        title: 'Updated profile and settings',
+        description: 'Your marketplace profile preferences were saved.',
+        resourceType: 'account',
+        resourceSlug: 'account',
+      });
       setMessage('Profile and settings saved.');
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Could not save your profile.');
@@ -274,6 +300,7 @@ export default function AccountPage() {
             <button type="submit" disabled={saving} style={{ ...primary, marginTop: 20 }}>{saving ? 'Saving…' : 'Save profile & settings'}</button>
           </form>
         </div>
+        <ActivityTimeline userId={user.id} />
       </div>
     </main>
   );
