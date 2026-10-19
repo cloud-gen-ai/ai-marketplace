@@ -3,6 +3,7 @@ import { formatPrice } from '@ai-marketplace/shared';
 import { getMarketplaceProducts } from '../../../lib/marketplace';
 import { getSkillPack } from '../../../lib/skill-packs';
 import { ProtectedDownloadButton } from '../../../components/protected-download-button';
+import { SkillPurchaseButton } from '../../../components/skill-purchase-button';
 
 function readableSkillName(value: string): string {
   return value.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
@@ -98,6 +99,7 @@ export default async function SkillReaderPage({ params, searchParams }) {
             </ol>
             <pre style={{ overflowX: 'auto', background: '#0f172a', color: '#dbeafe', borderRadius: 14, padding: 16, fontSize: 13, lineHeight: 1.6 }}>{`python -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\npython -m ${pack.module} --list`}</pre>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start', marginTop: 18 }}>
+              <SkillPurchaseButton slug={pack.slug} title={pack.title} isFree={product.price === 0} />
               <ProtectedDownloadButton href={downloadHref} label={downloadLabel} title={pack.title} resourceSlug={pack.slug} returnPath={`/skills/${pack.slug}?skill=${encodeURIComponent(selectedSkill)}`} />
               <a href="/marketplace" style={{ padding: '13px 17px', borderRadius: 12, border: '1px solid #cbd5e1', color: '#334155', textDecoration: 'none', fontWeight: 800 }}>Browse other packs</a>
             </div>
