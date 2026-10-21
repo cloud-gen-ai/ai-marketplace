@@ -82,15 +82,29 @@ export function buildDemoCalendarUrl(input: Pick<ServiceRequestInput, 'service_t
 }
 
 export function buildContactMailto(input: Pick<ServiceRequestInput, 'requester_name' | 'email' | 'organization' | 'service_type' | 'preferred_date' | 'preferred_time' | 'timezone' | 'message'>) {
-  const subject = encodeURIComponent(`AI Marketplace request: ${input.service_type}`);
+  const subject = encodeURIComponent(`Session request — ${input.service_type} — ${input.requester_name}`);
   const body = encodeURIComponent([
+    'Dear NextGen AI Team,',
+    '',
+    'I would like to schedule a session through the AI Marketplace. Please review the details below and confirm a suitable time with a Google Meet invitation.',
+    '',
+    'REQUEST DETAILS',
     `Name: ${input.requester_name}`,
     `Email: ${input.email}`,
     `Organization: ${input.organization || 'Individual'}`,
     `Service: ${input.service_type}`,
-    `Preferred time: ${input.preferred_date || 'To be confirmed'} ${input.preferred_time || ''} (${input.timezone || 'Asia/Kolkata'})`,
+    `Preferred date: ${input.preferred_date || 'To be confirmed'}`,
+    `Preferred time: ${input.preferred_time || 'To be confirmed'}`,
+    `Timezone: ${input.timezone || 'Asia/Kolkata'}`,
     '',
+    'DISCUSSION TOPIC',
     input.message,
+    '',
+    'Please confirm the final time and share the Google Meet link or calendar invitation.',
+    '',
+    'Kind regards,',
+    input.requester_name,
+    input.email,
   ].join('\n'));
   return `mailto:nextgenai.soulation@gmail.com?subject=${subject}&body=${body}`;
 }
