@@ -53,17 +53,16 @@ export function buildDemoCalendarUrl(input: Pick<ServiceRequestInput, 'service_t
     `Preferred time: ${input.preferred_date || 'To be confirmed'} ${input.preferred_time || ''} (${input.timezone || 'Asia/Kolkata'})`,
     `Agenda: ${input.message}`,
     'Team contact: nextgenai.soulation@gmail.com',
-    'The NextGen AI team will confirm the Google Meet link by email.',
+    'Open Google Calendar, confirm the time, choose Add Google Meet, then save and send the invite.',
   ].join('\n');
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: `AI Marketplace — ${input.service_type}`,
     details,
-    location: 'Google Meet (link shared by NextGen AI after confirmation)',
+    location: 'Google Meet',
   });
-  // Google Calendar opens a pre-addressed event draft. The user still confirms
-  // the event in their own calendar; a true automatic Meet invite requires a
-  // connected Google Calendar OAuth account on the server.
+  // Google Calendar opens a pre-addressed event draft. The user confirms the
+  // time and selects "Add Google Meet" before saving the invite.
   params.set('add', 'nextgenai.soulation@gmail.com');
   if (input.preferred_date && input.preferred_time) {
     const [hours, minutes] = input.preferred_time.split(':').map(Number);
